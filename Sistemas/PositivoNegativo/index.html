@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <label for="">Digite um número</label>
+        <input type="number" id="numero">
+    </form>
+
+    <button onclick="positivo()">Enviar</button>
+    <p id="resultado">
+
+    </p>
+
+    <script>
+        function positivo(){
+            let numero = document.getElementById("numero").value;
+            let resultado = document.getElementById("resultado");
+
+        if(numero > 1){
+            resultado.innerHTML = `Positivo`
+        } else if(numero == 0) {
+            resultado.innerHTML = `Zero`
+        } else if(numero < 1){
+            resultado.innerHTML = `Negativo`
+        }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estações</title>
+</head>
+<body>
+    <script>
+        function estacaoDoAno(mes){
+            switch (true){
+                case mes === 12 || mes === 1 || mes === 12:
+                    return "Verão"
+                    break;
+                case (mes >= 3 && mes <= 5):
+                    return "Outono";
+                case (mes >= 6 && mes <= 8):
+                    return "Inverno";
+                case (mes >= 9 && mes <= 11):
+                    return "Primavera";
+                default: 
+                    return "Insira um mês válido"
+            }
+        };;
+
+        console.log(estacaoDoAno(12))
+    </script>
+</body>
+</html>

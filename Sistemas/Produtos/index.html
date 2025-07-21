@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos</title>
+</head>
+<body>
+    <h4>Cadastre seu produto</h4>
+
+    <form action="">
+        <label for="">Insira o produto</label>
+        <input type="text" id="produto">
+
+        <label for="">Remover um produto</label>
+        <input type="text" id="remover">
+    </form>
+    <button onclick="cadastrar()">Cadastrar</button>
+    <button onclick="remover()">Remover</button>
+    <button onclick="limpar()">Limpar</button>
+
+    <h4>Listagem: </h4>
+    <ul id="lista"></ul>
+
+    <script>
+        let produtos = [];
+
+        function cadastrar(){
+            let produto = document.getElementById("produto").value;
+            let lista = document.getElementById("lista")
+
+            produtos.push(produto);
+
+            lista.innerHTML = "";
+            produtos.forEach(function(item){
+                lista.innerHTML += `<li>${item}</li>`
+            })
+
+            document.getElementById("lista").value = "";
+        }
+
+        function remover(){
+            let excluido = document.getElementById("remover").value;
+
+            if (produtos.indexOf(excluido) !== -1) {
+
+            produtos.splice(produtos.indexOf(excluido), 1)
+            lista.innerHTML = "";
+            produtos.forEach(function(item){
+                lista.innerHTML = `<li> ${item} </li>`
+            });
+
+            } else {
+                alert("Produto não encontrada")
+            }
+        }
+
+        function limpar(){
+            lista.innerHTML = "";
+        }
+    </script>
+</body>
+</html>

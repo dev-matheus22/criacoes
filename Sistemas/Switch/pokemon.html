@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <label for="">Informe o tipo do pokemon</label>
+        <input type="text" id="tipoPokemon">
+    </form>
+    <p id="resposta"></p>
+    <button onclick="tipo()">Enviar</button>
+
+    <script>
+        function tipo(){
+            let tipoPokemon = document.getElementById("tipoPokemon").value;
+            let resposta = document.getElementById("resposta");
+
+            switch(tipoPokemon.toLowerCase()){
+                case "Fogo":
+                resposta.innerHTML = "Fraqueza: água"
+                break;
+
+                case "Água":
+                resposta.innerHTML = "Fraqueza: planta"
+                break;
+
+                case "Planta":
+                resposta.innerHTML = "Fraqueza: fogo"
+                break;
+
+                default:
+                resposta.innerHTML = "Tipo desconhecido"
+                break;
+            }
+
+        }
+    </script>
+</body>
+</html>

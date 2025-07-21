@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let idade = Number(prompt("Digite sua idade"));
+
+        switch(true){
+            case (idade >= 0 && idade <= 12):
+                alert("Vai dormir, criança")
+                break;
+            case (idade >= 13 && idade <= 17):
+                alert("Tá virando hominho, adolescente")
+                break;
+            case (idade >= 18 && idade <= 64):
+                alert("Pode ser preso já")
+                break;
+            case (idade >= 65):
+                alert("Pé na cova")
+                break;
+            default:
+                alert("Insira uma idade")
+        }       
+    </script>
+</body>
+</html>

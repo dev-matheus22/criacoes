@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #h3{
+            
+        }
+    </style>
+</head>
+<body>
+    <h3 id="h3">Lista de filmes</h3>
+
+    <form action="">
+        <label for="">Insira um filme</label>
+        <input type="text" id="filme">
+    </form>
+    <button onclick="cadastrar()">Enviar</button>
+
+    <div>
+        <ul id="lista">
+
+        </ul>
+    </div>
+
+    <script>
+        let filmes = [];
+
+        function cadastrar(){
+            let filme = document.getElementById("filme").value;
+            let lista = document.getElementById("lista")
+            filmes.push(filme)
+            lista.innerHTML = "";
+            filmes.forEach(function (item){
+                lista.innerHTML += `<li>${item}</li>`
+            })
+
+        }
+    </script>
+</body>
+</html>

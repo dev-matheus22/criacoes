@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&family=Sacramento&display=swap');
+
+body {
+    background-color: #D5E5F2;
+    font-family: 'Quicksand', sans-serif;
+}     
+
+h1, h2, h3 {
+    font-family: 'Sacramento', sans-serif;
+}
+
+.como-funciona{
+    background-color: #46591D ;
+}
+
+#submenu {
+    display: none;  /* O submenu começa escondido */
+}

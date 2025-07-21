@@ -1,0 +1,374 @@
+<!DOCTYPE html> 
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Progressão</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .barra-xp-container {
+            width: 70%;
+            margin-top: 5px;
+        }
+        .barra-xp {
+            height: 20px;
+            background-color: #4caf50;
+            width: 0%;
+        }
+        .xp-indicador {
+            font-size: 0.9em;
+            color: #d3d3d3;
+        }
+        .foto-perfil {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .missao-prazo {
+            font-size: 0.9em;
+            color: #d3d3d3;
+        }
+        .missao-completa {
+            text-decoration: line-through;
+            color: #d3d3d3;
+        }
+        .insignia {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #bbb;
+            display: inline-block;
+            margin: 5px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+        }
+        .insignia-ativa {
+            background-color: coral;
+        }
+        .insignia-texto {
+            font-size: 12px;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-dark text-light">
+    <div class="container mt-4">
+        <header class="text-center mb-4">
+            <h1>Sistema de Progressão</h1>
+        </header>
+        
+        <!-- Informações do Usuário -->
+        <div class="d-flex justify-content-center mb-4">
+            <div>
+                <img id="foto-usuario" src="https://via.placeholder.com/100" alt="Foto do Usuário" class="foto-perfil">
+            </div>
+            <div class="ms-3">
+                <h4 id="nome-usuario">Nome: Matheus Jesus</h4>
+                <p id="idade-usuario">Idade: 25 anos</p>
+                <input type="file" id="upload-foto" class="form-control" accept="image/*" onchange="uploadFoto()">
+            </div>
+        </div>
+
+        <div class="card bg-secondary mb-3">
+            <div class="card-body">
+                <h4>Insígnias</h4>
+                <div id="insignias" class="d-flex flex-wrap justify-content-start">
+                    <!-- Insígnias aparecerão aqui -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção de Status -->
+        <div class="card bg-secondary mb-3">
+            <div class="card-body text-center">
+                <h4>Nível: <span id="nivel-geral">1</span></h4>
+                <p>XP: <span id="xp-atual">0</span> / <span id="xp-total">100</span></p>
+                <div class="progress">
+                    <div id="barra-xp" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contadores de Missões -->
+        <div class="d-flex justify-content-between mb-3">
+            <div><strong>Missões Ativas:</strong> <span id="contador-missoes-ativas">0</span></div>
+            <div><strong>Missões Completadas:</strong> <span id="contador-missoes-completadas">0</span></div>
+        </div>
+        
+        <!-- Adicionar Missão -->
+        <div class="card bg-secondary mb-3">
+            <div class="card-body">
+                <h4>Adicionar Missão</h4>
+                <form id="form-missao">
+                    <div class="mb-3">
+                        <label for="nome-missao" class="form-label">Nome da Missão</label>
+                        <input type="text" class="form-control" id="nome-missao" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="prazo-missao" class="form-label">Prazo</label>
+                        <input type="datetime-local" class="form-control" id="prazo-missao" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Adicionar Missão</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Lista de Missões -->
+        <div class="card bg-secondary mb-3">
+            <div class="card-body">
+                <h4>Missões</h4>
+                <ul id="lista-missoes" class="list-group">
+                    <!-- As missões serão adicionadas aqui -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Habilidades -->
+        <div class="card bg-secondary">
+            <div class="card-body">
+                <h4>Habilidades Desbloqueadas</h4>
+                <ul id="lista-habilidades" class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light">
+                        Força <span class="badge bg-primary" id="nivel-forca">Nível 1</span>
+                        <div class="barra-xp-container">
+                            <div class="barra-xp" id="xp-forca"></div>
+                        </div>
+                        <span class="xp-indicador" id="indicador-xp-forca">0/100</span>
+                        <div class="d-flex justify-content-between w-100 mt-2">
+                            <button class="btn btn-success btn-sm ms-2" onclick="addXP('forca', 10)">Adicionar XP</button>
+                            <button class="btn btn-warning btn-sm ms-2" onclick="renomearHabilidade('forca')">Renomear</button>
+                            <button class="btn btn-danger btn-sm ms-2" onclick="removerHabilidade('forca')">Remover</button>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center bg-dark text-light">
+                        Inteligência <span class="badge bg-primary" id="nivel-inteligencia">Nível 1</span>
+                        <div class="barra-xp-container">
+                            <div class="barra-xp" id="xp-inteligencia"></div>
+                        </div>
+                        <span class="xp-indicador" id="indicador-xp-inteligencia">0/100</span>
+                        <div class="d-flex justify-content-between w-100 mt-2">
+                            <button class="btn btn-success btn-sm ms-2" onclick="addXP('inteligencia', 10)">Adicionar XP</button>
+                            <button class="btn btn-warning btn-sm ms-2" onclick="renomearHabilidade('inteligencia')">Renomear</button>
+                            <button class="btn btn-danger btn-sm ms-2" onclick="removerHabilidade('inteligencia')">Remover</button>
+                        </div>
+                    </li>
+                    <!-- As outras habilidades vão aqui -->
+                </ul>
+                <button class="btn btn-primary mt-3" onclick="adicionarHabilidade()">Adicionar Habilidade</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Inicializando os valores de XP para cada habilidade
+        const habilidades = {
+            forca: { xp: 0, xpTotal: 100, nivel: 1, nome: 'Força' },
+            inteligencia: { xp: 0, xpTotal: 100, nivel: 1, nome: 'Inteligência' },
+        };
+
+        let missoesAtivas = 0;
+        let missoesCompletadas = 0;
+
+        // Função para adicionar XP a uma habilidade
+        function addXP(habilidade, quantidade) {
+            habilidades[habilidade].xp += quantidade;
+            if (habilidades[habilidade].xp >= habilidades[habilidade].xpTotal) {
+                habilidades[habilidade].xp = 0; // Resetando XP
+                habilidades[habilidade].nivel++; // Aumentando o nível
+                habilidades[habilidade].xpTotal *= 1.5; // Aumentando a dificuldade para o próximo nível
+            }
+            atualizarBarraXP(habilidade);
+            atualizarIndicadorXP(habilidade);
+            atualizarNivel(habilidade);
+            atualizarNivelGeral(); // Atualiza o nível geral
+        }
+
+        // Função para atualizar a barra de XP
+        function atualizarBarraXP(habilidade) {
+            const barra = document.getElementById('xp-' + habilidade);
+            const porcentagem = (habilidades[habilidade].xp / habilidades[habilidade].xpTotal) * 100;
+            barra.style.width = porcentagem + '%';
+        }
+
+        // Função para atualizar o indicador de XP
+        function atualizarIndicadorXP(habilidade) {
+            const indicador = document.getElementById('indicador-xp-' + habilidade);
+            indicador.textContent = habilidades[habilidade].xp + '/' + habilidades[habilidade].xpTotal;
+        }
+
+        // Função para atualizar o nível da habilidade
+        function atualizarNivel(habilidade) {
+            const nivel = document.getElementById('nivel-' + habilidade);
+            nivel.textContent = 'Nível ' + habilidades[habilidade].nivel;
+        }
+
+        // Função para atualizar o nível geral
+        function atualizarNivelGeral() {
+            let nivelGeral = 0;
+            let xpTotal = 0;
+            let xpAtual = 0;
+
+            for (let habilidade in habilidades) {
+                nivelGeral += habilidades[habilidade].nivel;
+                xpTotal += habilidades[habilidade].xpTotal;
+                xpAtual += habilidades[habilidade].xp;
+            }
+
+            const nivel = document.getElementById('nivel-geral');
+            const xpAtualDisplay = document.getElementById('xp-atual');
+            const xpTotalDisplay = document.getElementById('xp-total');
+            const barraXP = document.getElementById('barra-xp');
+
+            nivel.innerHTML = nivelGeral;
+            xpAtualDisplay.innerHTML = xpAtual;
+            xpTotalDisplay.innerHTML = xpTotal;
+            barraXP.style.width = (xpAtual / xpTotal) * 100 + '%';
+        }
+
+        // Função para fazer upload de uma foto de perfil
+        function uploadFoto() {
+            const input = document.getElementById('upload-foto');
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = document.getElementById('foto-usuario');
+                img.src = e.target.result;
+            };
+            
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Função para adicionar uma missão à lista
+        document.getElementById('form-missao').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const nomeMissao = document.getElementById('nome-missao').value;
+            const prazoMissao = document.getElementById('prazo-missao').value;
+
+            if (nomeMissao && prazoMissao) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center bg-dark text-light';
+                li.innerHTML = `${nomeMissao} <span class="missao-prazo">Prazo: ${new Date(prazoMissao).toLocaleString()}</span>`;
+                
+                const botaoCompletar = document.createElement('button');
+                botaoCompletar.className = 'btn btn-success btn-sm';
+                botaoCompletar.textContent = 'Completar';
+                botaoCompletar.onclick = function() {
+                    li.classList.add('missao-completa');
+                    missoesCompletadas++;
+                    missoesAtivas--;
+                    atualizarContadores();
+                    setTimeout(() => li.remove(), 1000); // Remove após 1 segundo
+                };
+
+                li.appendChild(botaoCompletar);
+                document.getElementById('lista-missoes').appendChild(li);
+
+                missoesAtivas++;
+                atualizarContadores();
+
+                // Limpar o formulário
+                document.getElementById('nome-missao').value = '';
+                document.getElementById('prazo-missao').value = '';
+            }
+        });
+
+        // Função para atualizar os contadores de missões
+        function atualizarContadores() {
+            document.getElementById('contador-missoes-ativas').textContent = missoesAtivas;
+            document.getElementById('contador-missoes-completadas').textContent = missoesCompletadas;
+        }
+
+        // Função para adicionar uma nova habilidade
+        function adicionarHabilidade() {
+            const nomeHabilidade = prompt("Digite o nome da nova habilidade:");
+            if (nomeHabilidade) {
+                const novaHabilidade = {
+                    xp: 0,
+                    xpTotal: 100,
+                    nivel: 1,
+                    nome: nomeHabilidade
+                };
+                habilidades[nomeHabilidade.toLowerCase()] = novaHabilidade;
+
+                // Criar o item da habilidade na lista
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center bg-dark text-light';
+                li.innerHTML = `${nomeHabilidade} <span class="badge bg-primary" id="nivel-${nomeHabilidade.toLowerCase()}">Nível 1</span>
+                    <div class="barra-xp-container">
+                        <div class="barra-xp" id="xp-${nomeHabilidade.toLowerCase()}"></div>
+                    </div>
+                    <span class="xp-indicador" id="indicador-xp-${nomeHabilidade.toLowerCase()}">0/100</span>`;
+                
+                const botaoAdicionarXP = document.createElement('button');
+                botaoAdicionarXP.className = 'btn btn-success btn-sm ms-2';
+                botaoAdicionarXP.textContent = 'Adicionar XP';
+                botaoAdicionarXP.onclick = function() {
+                    addXP(nomeHabilidade.toLowerCase(), 10);
+                };
+
+                const botaoRenomear = document.createElement('button');
+                botaoRenomear.className = 'btn btn-warning btn-sm ms-2';
+                botaoRenomear.textContent = 'Renomear';
+                botaoRenomear.onclick = function() {
+                    renomearHabilidade(nomeHabilidade.toLowerCase());
+                };
+
+                const botaoRemover = document.createElement('button');
+                botaoRemover.className = 'btn btn-danger btn-sm ms-2';
+                botaoRemover.textContent = 'Remover';
+                botaoRemover.onclick = function() {
+                    removerHabilidade(nomeHabilidade.toLowerCase());
+                };
+
+                li.appendChild(botaoAdicionarXP);
+                li.appendChild(botaoRenomear);
+                li.appendChild(botaoRemover);
+
+                document.getElementById('lista-habilidades').appendChild(li);
+
+                // Atualizar o nível geral
+                atualizarNivelGeral();
+            }
+
+            
+        }
+
+        // Insígnias desbloqueadas (exemplo)
+        let insignias = {
+            "completar10missoes": false,
+            "nivel5habilidade": false,
+            "acumular1000xp": false
+        };
+
+        // Função para adicionar uma insígnia
+        function adicionarInsignia(nomeInsignia) {
+            insignias[nomeInsignia] = true;
+            atualizarInsignias();
+        }
+
+        // Função para atualizar o painel de insígnias
+        function atualizarInsignias() {
+            const divInsignias = document.getElementById('insignias');
+            divInsignias.innerHTML = ''; // Limpa as insígnias antigas
+
+            for (let key in insignias) {
+                const div = document.createElement('div');
+                div.className = 'insignia ' + (insignias[key] ? 'insignia-ativa' : '');
+                div.innerHTML = `<span class="insignia-texto">${key.replace(/([A-Z])/g, ' $1').trim()}</span>`;
+                divInsignias.appendChild(div);
+            }
+        }
+
+        // Exemplos de como adicionar insígnias
+        adicionarInsignia('completar10missoes');
+        adicionarInsignia('nivel5habilidade');
+    </script>
+</body>
+</html>

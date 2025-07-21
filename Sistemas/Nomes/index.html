@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  <form action="">
+    <label for=""> uma letra</label>
+    <input type="text" id="letra">
+</form>
+
+<button onclick="buscar()">Enviar</button>
+<ul id="lista"></ul>
+
+<script>
+    function buscar(){
+        let nomes = ["Carlos", "Emanuel", "Sandro", "Elias", "Cleiton"];
+        let letra = document.getElementById("letra").value;
+        let lista = document.getElementById("lista");
+
+        let filtro = nomes.filter(nome => nome.toLowerCase().startsWith(letra.toLowerCase()));
+        
+        lista.innerHTML = "";
+        filtro.forEach(function(item){
+            lista.innerHTML += `<li>${item}</li>`;
+        });
+    }
+</script>
+
+</body>
+</html>

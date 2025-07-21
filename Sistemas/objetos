@@ -1,0 +1,192 @@
+Os objetos em javascript seguem a mesma lógica dos objetos em outras linguagens e também da vida real. Por exemplo, uma caneta é um objeto e ela tem propriedades como marca, cor e tamanho. No JS, os objetos são entidades independentes.
+
+Objetos e propriedades
+
+Um objeto em Java script basicamente tem propriedades associadas a ele essas propriedades são como variáveis ligadas ao objeto porque elas basicamente são a mesma coisa que variáveis. As propriedades de um objeto define as características do objeto e você consegue acessar essas características por uma simples notação de ponto.
+
+nomeDoObjeto.nomeDaPropriedade
+
+O nome do objeto e o nome da propriedade diferem em questão de maiúscula/minúscula. Você pode definir uma propriedade atribuindo um valor a ela. Por exemplo, um objeto chamado meu carro pode ter as probabilidades chamadas fabrica coração, modelo e ano.
+
+As propriedades do objeto em Java script podem ser alteradas usando-se anotação de colchetes. Os objetos também recebem o nome de arrays associativos, uma vez que cada propriedade é associada com um valor de string que pode ser usada para acessá-la.
+
+O objeto pode ser acessado tanto pela notação de ponto qan to por uma notação de colchetes obj["propriedade"]. No entanto, é seu as propriedades com notação de colchetes deve ser feita principalmente quando não existe um identificador JavaScript válido no nome da propriedade. Um identificador válido segue algumas regras como não pode começar com um número não pode ter espaços ou caracteres especiais exceto _ ou $ e ele pode conter letras, números ou os 2 caracteres especiais citadas acima.
+
+Às vezes pode acontecer do nome da propriedade só ser conhecido durante a execução do programa: 
+
+let chave = "nome"; // ou poderia vir de um input do usuário
+console.log(pessoa[chave]); // pessoa["nome"] -> "João"
+
+Como chave é uma variável, só funciona com colchetes.ff
+
+Para acessar uma propriedade de um objeto em JavaScript usando o valor de uma string armazenada dentro do próprio objeto, você pode usar a notação de colchetes.
+
+const pessoa = {
+    nome: "João",
+    idade: 30,
+    profissão: "Desenvolvedor"
+};
+
+// O nome da propriedade está armazenado como string em uma variável
+let chave = "nome";
+
+// Agora você pode usar essa variável para acessar a propriedade
+console.log(pessoa[chave]); // Saída: João
+
+Aqui, a variável chave contém a string "nome", que é o nome da propriedade dentro do objeto pessoa. Usamos pessoa[chave] para acessar o valor dessa propriedade, que é "João" porque a notação de colchetes interpreta o conteúdo da variável como o nome da propriedade.
+
+const obj = {
+    propriedade: "nome",
+    nome: "Maria"
+};
+
+// A propriedade armazenada em "propriedade" aponta para o nome da chave "nome"
+console.log(obj[obj.propriedade]); // Saída: Maria
+
+Neste exemplo, obj.propriedade contém a string "nome", e obj[obj.propriedade] acessa a propriedade nome de obj, retornando "Maria".
+
+A notação de colchetes pode ainda ser usada com o comando for...in para percorrer todas as propriedades enumeráveis de um objeto.
+
+let usuario = {
+    nome: "Lucas",
+    idade: 28,
+    cidade: "São Paulo"
+};
+
+for (let chave in usuario) {
+    console.log(chave + ": " + usuario[chave]);
+}
+
+	• Na primeira volta, chave = "nome", e ele imprime usuario["nome"] que é "Lucas".
+	• Na segunda volta, chave = "idade", e ele imprime 28.
+	• E assim por diante até acabar.
+
+Se o objeto tiver propriedades herdadas, ele também pega as herdadas (mas isso pode ser evitado com hasOwnProperty() se precisar).
+
+for (let chave in usuario) {
+    if (usuario.hasOwnProperty(chave)) {
+        console.log(chave + ": " + usuario[chave]);
+    }
+}
+
+Propriedades enumeráveis e não enumeráveis
+
+Propriedades enumeráveis são aquelas que aparecem quando fazemos um for...in, Object.keys() outras formas de listar as chaves de um objeto.. Já as não enumeráveis não aparecem quando usamos esses métodos. Basicamente, você que decide se uma propriedade será enumerável ou não quando você cria ou modifica ela com Object.defineProperty() porque por padrão, todas elas são enumeráveis. O Object.defineProperty() não cria o objeto, apenas modifica uma propriedade de um objeto que já existe.
+
+Let obj = {}
+
+Object.defineProperty(obj, "idade", {
+    value: 25,
+    enumerable: true,
+    writable: true,
+    configurable: true
+});
+
+Métodos de enumeração
+
+• For...in loops Esse método caminha por todas as propriedades enumeráveis de um objeto e sua cadeia de protótipos
+• Object.keys(o) Esse método retorna um array com todos os nomes ("chaves") de propriedades próprios de um objeto o (mas não na cadeia de protótipos).
+• Object.getOwnPropertyNames(o) Esse método retorna um array contendo todos os nomes de propriedades próprios (enumeráveis ou não) de um objeto o.
+• Reflect.ownKeys() Se você deseja listar todas as propriedades, incluindo propriedades não enumeráveis, pode usar Reflect.ownKeys(). Isso pode ser útil, já que propriedades não enumeráveis não são capturadas por métodos como Object.keys() ou for...in.
+• Função listarTodasAsPropriedades A função lista todas as propriedades de um objeto, incluindo as que são herdadas de seu protótipo, até o topo da cadeia de protótipos (o que normalmente é Object.prototype).
+
+function listarTodasAsPropriedades(o) {
+  var objectoASerInspecionado;
+  var resultado = [];
+
+  for (
+    objectoASerInspecionado = o;
+    objectoASerInspecionado !== null;
+    objectoASerInspecionado = Object.getPrototypeOf(objectoASerInspecionado)
+  ) {
+    resultado = resultado.concat(
+      Object.getOwnPropertyNames(objectoASerInspecionado),
+    );
+  }
+
+  return resultado;
+}
+
+Criação dos objetos
+
+A notação literal é a maneira mais simples de criar objetos:
+
+Var obj {
+Propriedade_1: "",
+Propriedade_2: ""
+}
+
+Cada propriedade é um identificador e cada "" pode conter um valor atribuido à propriedade_n. Se você não precisar de referencia ao objeto, basta declará-lo sem variável.
+
+if (cond) var x = { hi: "there" };
+
+O código acima cria um objeto se a condição for satisfeita.
+
+var minhaHonda = {
+  cor: "vermelho",
+  rodas: 4,
+  motor: { cilindros: 4, tamanho: 2.2 },
+};
+
+Já o exemplo acima cria minhaHonda com três propriedades, sendo o motor um objeto dentro de outro. Para acessar a propriedade:
+
+minhaHonda.motor.cilindro
+minhaHonda["motor"]["cilindro"]
+
+Função construtora
+
+Pode-se utilizar também uma função construtora:
+
+function Carro(marca, modelo, ano) {
+  this.marca = marca;
+  this.modelo = modelo;
+  this.ano = ano;
+}
+
+O this serve para atribuir valores às propriedades do objeto com base nos argumentos da função.
+
+Para criar o objeto:
+
+var meucarro = new Carro("Eagle", "Talon TSi", 1993);
+
+Aqui um objeto também pode ter outro objeto como propriedade.
+
+function Pessoa(nome, idade, sexo) {
+  this.nome = nome;
+  this.idade = idade;
+  this.sexo = sexo;
+}
+
+var jose = new Pessoa("Jose Silva", 33, "M");
+var paulo = new Pessoa("Paulo Santos", 39, "M");
+
+function Carro(marca, modelo, ano, dono) {
+  this.marca = marca;
+  this.modelo = modelo;
+  this.ano = ano;
+  this.dono = dono;
+}
+
+var carro1 = new Carro("Eagle", "Talon TSi", 1993, jose);
+var carro2 = new Carro("Nissan", "300ZX", 1992, paulo);
+
+Dessa maneira, os objetos jose e paulo são passados como argumento para o dono. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

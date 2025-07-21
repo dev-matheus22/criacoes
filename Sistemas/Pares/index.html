@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pares</title>
+</head>
+<body>
+    <form action="">
+        <label for="">Digite os números (separados por espaço)</label>
+        <input type="text" id="numeros">
+    </form>
+    
+    <button onclick="pares()">Enviar</button>
+    
+    <script>
+        function pares(){
+            let numeros = document.getElementById("numeros").value;
+    
+            // Divida a string com espaços em um array de números
+            let cada = numeros.split(" ").map(item => Number(item));
+    
+            console.log(cada)      
+    
+            // Filtre os números pares
+            let par = cada.filter(num => num % 2 === 0);
+    
+            console.log(par);  // Exibe os números pares
+        }
+    </script>
+    
+</body>
+</html>

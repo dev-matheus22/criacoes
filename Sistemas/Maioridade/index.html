@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <label for="">Insira a idade</label>
+        <input type="number" id="idade">
+    </form>
+    <button onclick="verifica()">Enviar</button>
+
+    <script>
+
+        function verifica(){
+            let idade = Number(document.getElementById("idade").value);
+
+            if (idade >= 18){
+                alert("Maior de idade")
+            } else {
+                alert("Criança!")
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function conversor(codigo){
+            switch(codigo){
+                case "USD": 
+                console.log("Dólar")
+                break;
+
+                case "EUR": 
+                console.log("Euro")
+                break;
+
+                case "BRL": 
+                console.log("Real")
+                break;
+
+                case "JPY": 
+                console.log("Iene")
+                break;
+
+                default:
+                console.log("Moeda desconhecida!")
+                break;
+            }
+        };
+
+        conversor("EUR");
+    </script>
+</body>
+</html>

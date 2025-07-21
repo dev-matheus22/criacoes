@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="contador">
+
+    </p>
+
+    <script>
+        let contador = document.getElementById("contador");
+
+        let i = 0;
+
+        while( i < 10){
+            contador.innerHTML += `<br>${i}`;
+            i++;
+        }
+    </script>
+</body>
+</html>

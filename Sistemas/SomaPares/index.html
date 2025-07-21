@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="">
+        <label for="">Digite os números</label>
+        <input type="text" id="numeros">
+    </form>
+    <button onclick="somar()">Enviar</button>
+    <p id="resultado">
+
+    </p>
+
+    <script>
+    function somar(){
+        let numeros = document.getElementById("numeros").value;
+        let resultado = document.getElementById("resultado")
+
+        let filtro = numeros.split(" ").map(item => Number(item)); 
+    
+        let par = filtro.filter(num => num % 2 === 0);
+    
+        let soma = par.reduce((acumulador, num) => acumulador + num, 0)
+
+        resultado.innerHTML = `O resultado é: ${soma}`
+        }
+    </script>
+</body>
+</html>

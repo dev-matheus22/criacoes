@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de tarefas</title>
+    <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=LFB02ASKjxl3&format=png&color=000000" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        text-align: center;
+        margin: 20px;
+    }
+
+    .container {
+        background: white;
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .h1 {
+        color: #007bff;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    #btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    ol {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    ol li {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        margin: 5px 0;
+        border-radius: 5px;
+    }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1 class="h1">Organizador de tarefas</h1>
+    <p>Use este espaço para organizar suas tarefas!</p>
+    </div>
+
+    <div class="container">
+        <form action="">
+            <div class="form-group">
+            <label for="tarefa" class="form-control">O que você fará hoje?</label>
+            <input type="text" class="form-control" id="tarefa">
+            <button id="btn" onclick="cadastrarTarefa()" type="submit" class="btn btn-primary mt-2" style="margin-left: auto; margin-right: auto;">Enviar</button>
+        </div>
+        </form>
+    </div>
+
+    </div>
+
+    <div>
+        <ol id="lista">
+
+        </ol>
+    </div>
+
+    <script>
+        let listaTarefas = [];
+
+        function cadastrarTarefa(){
+            event.preventDefault();
+
+            let tarefa = document.getElementById("tarefa").value;
+            let lista = document.getElementById("lista");
+
+            listaTarefas.push(tarefa);
+
+            lista.innerHTML = "";
+            listaTarefas.forEach(function(item){
+                lista.innerHTML += `<li>${item}
+                    <button class="btn btn-primary">
+                                
+                        </button>
+                    <button class="btn btn-primary">Remover</button>
+                    </li> `
+            })
+
+            document.getElementById("lista").value = ""
+        }
+
+    </script>
+</body>
+</html>

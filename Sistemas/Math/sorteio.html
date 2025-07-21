@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let escolhido = Number(prompt("Escolha um número de 1 ao 10"))
+
+        let sorteado = Math.floor(Math.random() * (10 - 1 + 1)) + 1
+        
+        if(escolhido <= 10){
+            if( sorteado === escolhido){
+            alert(`O número escolhido por você foi: ${escolhido}
+            O número sorteado foi: ${sorteado}
+            e você acertou, parabéns!!`)
+        }   else {
+            alert(`O número escolhido por você foi: ${escolhido}
+            O número sorteado foi: ${sorteado}
+            e você errou`)
+        }
+        } else {
+            alert("Escolha um número entre 0 e 10")
+        }
+
+    </script>
+</body>
+</html>
