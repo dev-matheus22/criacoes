@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Pula Plataforma</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #c1f0ff;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+  #menuInicial {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #c1f0ff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+  #menuInicial button {
+    margin: 10px;
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  #game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: linear-gradient(to top, #a3eaff, #e0ffff);
+  }
+  #player {
+    width: 40px;
+    height: 40px;
+    background-color: #0066ff;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .platform {
+    position: absolute;
+    width: 100px;
+    height: 10px;
+    background-color: #444;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    z-index: 1000;
+  }
+  #message {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+  }
+  #restartBtn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div id="menuInicial">
+  <h1>🏃‍♂️ Pula Plataforma</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnRanking">🏆 Ver Ranking</button>
+  <button id="btnVoltar">🔙 Voltar ao Menu</button>
+</div>
+
+<div id="game" style="display:none;">
+  <div id="player"></div>
+  <div id="score">Tempo: 0s</div>
+  <div id="message">
+    <div id="gameOverText"></div>
+    <button id="restartBtn">Jogar Novamente</button>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkMTTM5yJbyIzjCl3vovJXx1dlNEX2IpU",
+    authDomain: "beija-sapo.firebaseapp.com",
+    projectId: "beija-sapo",
+    storageBucket: "beija-sapo.firebasestorage.app",
+    messagingSenderId: "429297677162",
+    appId: "1:429297677162:web:3792b9546b7b44a16e6b13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+  });
+
+  // DOM Elements
+  const menu = document.getElementById("menuInicial");
+  const btnIniciar = document.getElementById("btnIniciar");
+  const btnRanking = document.getElementById("btnRanking");
+  const btnVoltar = document.getElementById("btnVoltar");
+  const game = document.getElementById("game");
+  const player = document.getElementById("player");
+  const scoreEl = document.getElementById("score");
+  const message = document.getElementById("message");
+  const gameOverText = document.getElementById("gameOverText");
+  const restartBtn = document.getElementById("restartBtn");
+
+  // Game variables
+  let playerX = window.innerWidth / 2 - 20;
+  let playerY = 300;
+  let velocityY = 0;
+  let gravity = 0.5;
+  let jumpPower = -10;
+  let isJumping = false;
+  let platforms = [];
+  let gameRunning = false;
+  let startTime = 0;
+  let elapsedTime = 0;
+  let animationId = null;
+
+  // Cria plataformas iniciais
+  function createPlatform(x, y) {
+    const plat = document.createElement("div");
+    plat.classList.add("platform");
+    plat.style.left = x + "px";
+    plat.style.bottom = y + "px";
+    plat.dataset.y = y;
+    game.appendChild(plat);
+    platforms.push(plat);
+  }
+
+ function initPlatforms() {
+  platforms.forEach(p => p.remove());
+  platforms = [];
+
+  // Plataforma inicial sempre sob o player
+  createPlatform(playerX, 100);
+
+  let lastX = playerX;
+  let lastY = 100;
+
+  // Criar mais 5 plataformas acima da inicial, espaçadas horizontal e verticalmente
+  for (let i = 1; i < 6; i++) {
+    // Distância vertical entre 100 e 130 px
+    let newY = lastY + 100 + Math.random() * 30;
+
+    // Distância horizontal máxima ±120 px do último X, limitando à tela
+    let minX = Math.max(0, lastX - 120);
+    let maxX = Math.min(window.innerWidth - 100, lastX + 120);
+    let newX = minX + Math.random() * (maxX - minX);
+
+    createPlatform(newX, newY);
+
+    lastX = newX;
+    lastY = newY;
+  }
+}
+
+
+  // Movimentação
+  function handleKeyDown(e) {
+    if (!gameRunning) return;
+    if (e.key === "ArrowLeft") {
+      playerX -= 20;
+      if (playerX < 0) playerX = 0;
+    }
+    else if (e.key === "ArrowRight") {
+      playerX += 20;
+      if (playerX > window.innerWidth - 40) playerX = window.innerWidth - 40;
+    }
+    else if (e.key === "ArrowUp") {
+      if (!isJumping) {
+        velocityY = jumpPower;
+        isJumping = true;
+      }
+    }
+    player.style.left = playerX + "px";
+  }
+
+  // Loop do jogo
+  function gameLoop() {
+    if (!gameRunning) return;
+
+    velocityY += gravity;
+    playerY -= velocityY;
+
+    player.style.bottom = playerY + "px";
+
+    let landed = false;
+
+    // colisão com plataformas
+    platforms.forEach(plat => {
+      const platRect = plat.getBoundingClientRect();
+      const playerRect = player.getBoundingClientRect();
+
+      if (
+        velocityY > 0 && // caindo
+        playerRect.bottom >= platRect.top &&
+        playerRect.bottom <= platRect.top + 10 &&
+        playerRect.left + 20 >= platRect.left &&
+        playerRect.right - 20 <= platRect.right
+      ) {
+        velocityY = 0;
+        playerY = parseFloat(plat.style.bottom) + 40;
+        isJumping = false;
+        landed = true;
+      }
+    });
+
+    // move plataformas para baixo
+    platforms.forEach(plat => {
+      let y = parseFloat(plat.dataset.y);
+      y -= 2;
+      if (y < -10) {
+        plat.remove();
+        platforms = platforms.filter(p => p !== plat);
+        createPlatform(Math.random() * (window.innerWidth - 100), window.innerHeight);
+      } else {
+        plat.style.bottom = y + "px";
+        plat.dataset.y = y;
+      }
+    });
+
+    // se cair fora da tela
+    if (playerY < -40) {
+      endGame();
+      return;
+    }
+
+    // atualiza tempo e score
+    elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    scoreEl.textContent = `Tempo: ${elapsedTime}s`;
+
+    animationId = requestAnimationFrame(gameLoop);
+  }
+
+  // Finaliza o jogo
+  async function endGame() {
+    gameRunning = false;
+    cancelAnimationFrame(animationId);
+    message.style.display = "block";
+    gameOverText.innerHTML = `Fim de jogo!<br>Tempo sobrevivido: ${elapsedTime}s`;
+
+    // Salvar no ranking se usuário estiver logado
+    if (currentUser) {
+      try {
+        await addDoc(collection(db, "rank_pula_plataforma"), {
+          nome: currentUser.displayName || "Anônimo",
+          tempo: elapsedTime,
+          data: Date.now(),
+          userId: currentUser.uid
+        });
+      } catch(e) {
+        console.error("Erro ao salvar ranking:", e);
+      }
+    }
+  }
+
+  // Reinicia o jogo
+  restartBtn.addEventListener("click", () => {
+    startGame();
+    message.style.display = "none";
+  });
+
+  // Inicia o jogo
+  function startGame() {
+    menu.style.display = "none";
+    game.style.display = "block";
+    playerX = window.innerWidth / 2 - 20;
+    playerY = 300;
+    velocityY = 0;
+    isJumping = false;
+    elapsedTime = 0;
+    startTime = Date.now();
+    scoreEl.textContent = "Tempo: 0s";
+    initPlatforms();
+    player.style.left = playerX + "px";
+    player.style.bottom = playerY + "px";
+    gameRunning = true;
+    gameLoop();
+  }
+
+  // Mostrar ranking
+  btnRanking.addEventListener("click", async () => {
+    if (!currentUser) {
+      alert("Faça login para ver o ranking.");
+      return;
+    }
+    const q = query(collection(db, "rank_pula_plataforma"), orderBy("tempo", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+
+    let texto = "🏆 Top 5 - Pula Plataforma\n\n";
+    snapshot.forEach((doc, i) => {
+      const d = doc.data();
+      texto += `${i + 1}. ${d.nome} - ${d.tempo}s\n`;
+    });
+
+    alert(texto);
+  });
+
+  btnIniciar.addEventListener("click", () => startGame());
+
+  btnVoltar.addEventListener("click", () => {
+    window.location.href = "../jogos.html";
+  });
+
+  document.addEventListener("keydown", handleKeyDown);
+</script>
+
+</body>
+</html>

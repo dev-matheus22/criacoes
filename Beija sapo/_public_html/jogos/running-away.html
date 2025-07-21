@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fuja do Ex!</title>
+  <style>
+    body {
+      margin: 0;
+      background: #e0ffe0;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to top, #a8d8a8, #f0fff0);
+      display: none;
+    }
+    #player, #ex {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      position: absolute;
+    }
+    #player {
+      background-color: green;
+      left: 400px;
+      bottom: 50px;
+    }
+    #ex {
+      background-color: red;
+      left: 0;
+      bottom: 50px;
+    }
+    .obstacle {
+      width: 30px;
+      height: 30px;
+      background-color: black;
+      position: absolute;
+    }
+    #msg {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      background: white;
+      padding: 20px;
+      display: none;
+      border-radius: 10px;
+      z-index: 10;
+    }
+    #restartBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #score {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+    }
+
+    /* Menu Inicial */
+    #menuInicial {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #e0ffe0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    #menuInicial button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menuInicial">
+  <h1 style="font-size:32px;margin-bottom:30px;color:#333;">🎮 Running away</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnRanking">🏆 Ver Ranking</button>
+  <button id="btnVoltar">🔙 Voltar ao Menu</button>
+</div>
+
+<div id="game">
+  <div id="player"></div>
+  <div id="ex"></div>
+  <div id="msg">
+    <div id="endText"></div>
+    <button id="restartBtn">Jogar Novamente</button>
+  </div>
+  <div id="score">Tempo: 0s - Level: 1</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkMTTM5yJbyIzjCl3vovJXx1dlNEX2IpU",
+    authDomain: "beija-sapo.firebaseapp.com",
+    projectId: "beija-sapo",
+    storageBucket: "beija-sapo.firebasestorage.app",
+    messagingSenderId: "429297677162",
+    appId: "1:429297677162:web:3792b9546b7b44a16e6b13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ⬇️ Salva score ao fim do jogo
+  let currentUser = null;
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+});
+
+window.salvarPontuacaoFujaEx = async (tempo, level) => {
+  if (!currentUser) return;
+  await addDoc(collection(db, "rank_running_away"), {
+    nome: currentUser.displayName || "Anônimo",
+    tempo,
+    level,
+    data: Date.now(),
+    userId: currentUser.uid
+  });
+};
+
+
+  // ⬇️ Exibe Top 5 em alerta
+  window.mostrarRankingFujaEx = async () => {
+
+    if (!currentUser) {
+    alert("Faça login para ver o ranking.");
+    return;
+  }
+
+    const q = query(collection(db, "rank_running_away"), orderBy("tempo", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+
+    let texto = "🏆 Top 5 - Fuja do Ex\n\n";
+    snapshot.forEach((doc, i) => {
+      const d = doc.data();
+      texto += `${i + 1}. ${d.nome} - ${d.tempo}s (Lvl ${d.level})\n`;
+    });
+
+    alert(texto);
+  };
+
+  const menu = document.getElementById("menuInicial");
+  const game = document.getElementById("game");
+  const btnIniciar = document.getElementById("btnIniciar");
+  const btnRanking = document.getElementById("btnRanking");
+  const btnVoltar = document.getElementById("btnVoltar");
+
+  let playerX = 400;
+  let playerY = 50;
+  let step = 30;
+  let tempo = 0;
+  let level = 1;
+  let velocidadeX = 2;
+  let frequenciaObstaculos = 1200;
+  let exDirecao = 1;
+  let exX = 0;
+  let exY = 50;
+
+  let exInterval, cronometro, obstaculos;
+  let gameRunning = false;
+
+  const player = document.getElementById("player");
+  const ex = document.getElementById("ex");
+  const msg = document.getElementById("msg");
+  const endText = document.getElementById("endText");
+  const restartBtn = document.getElementById("restartBtn");
+  const scoreEl = document.getElementById("score");
+
+  function iniciarJogo() {
+    gameRunning = true;
+    game.style.display = "block";
+    menu.style.display = "none";
+    tempo = 0;
+    level = 1;
+    velocidadeX = 2;
+    frequenciaObstaculos = 1200;
+    playerX = 400;
+    playerY = 50;
+    exX = 0;
+    exY = 50;
+
+    player.style.left = playerX + "px";
+    player.style.bottom = playerY + "px";
+    ex.style.left = exX + "px";
+    ex.style.bottom = exY + "px";
+    scoreEl.innerText = `Tempo: 0s - Level: 1`;
+
+    exInterval = setInterval(moverEx, 20);
+    obstaculos = setInterval(criarObstaculo, frequenciaObstaculos);
+    cronometro = setInterval(atualizarTempo, 1000);
+  }
+
+  function moverEx() {
+    if (!gameRunning) return;
+
+    exX += velocidadeX * exDirecao;
+    if (exX > window.innerWidth - 50) exDirecao = -1;
+    if (exX < 0) exDirecao = 1;
+    ex.style.left = exX + "px";
+
+    if (exY < playerY) exY += 1.5;
+    else if (exY > playerY) exY -= 1.5;
+    ex.style.bottom = exY + "px";
+
+    const playerRect = player.getBoundingClientRect();
+    const exRect = ex.getBoundingClientRect();
+    if (
+      playerRect.left < exRect.right &&
+      playerRect.right > exRect.left &&
+      playerRect.top < exRect.bottom &&
+      playerRect.bottom > exRect.top
+    ) {
+      encerrarJogo("O ex te alcançou! 😱");
+    }
+  }
+
+  function criarObstaculo() {
+    if (!gameRunning) return;
+
+    const obst = document.createElement("div");
+    obst.classList.add("obstacle");
+    obst.style.left = Math.floor(Math.random() * (window.innerWidth - 30)) + "px";
+    obst.style.bottom = window.innerHeight + "px";
+    game.appendChild(obst);
+
+    let obsY = window.innerHeight;
+    const obsInterval = setInterval(() => {
+      if (!gameRunning) {
+        clearInterval(obsInterval);
+        return;
+      }
+
+      obsY -= 5;
+      obst.style.bottom = obsY + "px";
+
+      const obstRect = obst.getBoundingClientRect();
+      const playerRect = player.getBoundingClientRect();
+      if (
+        obstRect.left < playerRect.right &&
+        obstRect.right > playerRect.left &&
+        obstRect.bottom > playerRect.top &&
+        obstRect.top < playerRect.bottom
+      ) {
+        clearInterval(obsInterval);
+        encerrarJogo("Você bateu num obstáculo! 💥");
+      }
+
+      if (obsY < -30) {
+        clearInterval(obsInterval);
+        obst.remove();
+      }
+    }, 30);
+  }
+
+  function atualizarTempo() {
+    if (!gameRunning) return;
+    tempo++;
+    scoreEl.innerText = `Tempo: ${tempo}s - Level: ${level}`;
+
+    if (tempo % 15 === 0) {
+      level++;
+      velocidadeX += 1;
+      frequenciaObstaculos = Math.max(400, frequenciaObstaculos - 200);
+      clearInterval(obstaculos);
+      obstaculos = setInterval(criarObstaculo, frequenciaObstaculos);
+    }
+  }
+
+  async function encerrarJogo(motivo) {
+    gameRunning = false;
+    clearInterval(exInterval);
+    clearInterval(obstaculos);
+    clearInterval(cronometro);
+    msg.style.display = "block";
+    endText.innerHTML = `${motivo}<br><strong>Sobreviveu por ${tempo} segundos.</strong><br><strong>Level alcançado: ${level}</strong>`;
+
+    await window.salvarPontuacaoFujaEx(tempo, level);
+  }
+
+
+  restartBtn.addEventListener("click", () => {
+    window.location.reload();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!gameRunning) return;
+    if (e.key === "ArrowRight") playerX += step;
+    if (e.key === "ArrowLeft") playerX -= step;
+    if (e.key === "ArrowUp") playerY += step;
+    if (e.key === "ArrowDown") playerY -= step;
+
+    playerX = Math.max(0, Math.min(window.innerWidth - 50, playerX));
+    playerY = Math.max(0, Math.min(window.innerHeight - 50, playerY));
+
+    player.style.left = playerX + "px";
+    player.style.bottom = playerY + "px";
+  });
+
+  btnIniciar.addEventListener("click", iniciarJogo);
+  btnRanking.addEventListener("click", mostrarRankingFujaEx);
+  btnVoltar.addEventListener("click", () => window.location.href = "../jogos.html");
+</script>
+
+</body>
+</html>

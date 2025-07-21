@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="iconSapo.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+      body {
+        background: linear-gradient(135deg, #A8E6CF, #DCEDC1);
+        padding: 10px;
+        color: white;
+        text-align: center;
+        border-radius: 0 0 10px 10px;
+        width: 100%;
+        margin-top: 30px;
+        position: relative;
+        font-family: 'Montserrat Alternates', sans-serif;
+      }
+
+      header {
+          background-color: #0d6efd;
+          padding: 20px;
+          color: white;
+          text-align: center;
+          border-radius: 10px 10px 0 0;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          width: 100%;
+      }
+      .card {
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border-radius: 12px;
+          background-color: #E0F7FA; /* Branco com transparência */
+          padding: 30px;
+          width: 100%;
+          max-width: 800px;
+          margin-top: 100px;
+      }
+
+      .form-label {
+          color: #5e35b1;
+      }
+
+      .form-control {
+          border: 1px solid #d1c4e9;
+      }
+
+      .form-control:focus {
+          border-color: #a78bfa;
+          box-shadow: 0 0 0 0.25rem rgba(167, 139, 250, 0.25);
+      }
+
+      .btn-primary {
+          background-color: #facc15;
+          border-color: #facc15;
+          color: #fff;
+      }
+
+      .btn-primary:hover {
+          background-color: #eab308;
+          border-color: #eab308;
+      }
+
+      .text-center {
+          color: #7e57c2;
+      }
+
+      .mb-4 {
+          margin-bottom: 2rem;
+      }
+
+      #rolêTitulo {
+          color: #7e57c2;
+      }
+
+      /* Estilos para os novos botões */
+      .dynamic-btn {
+          transition: all 0.3s ease;
+          padding: 12px 20px;
+          margin: 10px;
+          font-size: 16px;
+      }
+
+      .dynamic-btn:hover {
+          transform: scale(1.1);
+          background-color: #7e57c2;
+          color: white;
+      }
+
+      /* Estilo da tela modal de bugs */
+      #bugContainer {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          display: none; /* Esconde inicialmente */
+          align-items: center;
+          justify-content: center;
+          z-index: 999;
+      }
+
+      #bugContainer .modal-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 10px;
+          width: 80%;
+          max-width: 600px;
+          text-align: center;
+      }
+
+      /* Botão de fechar */
+      #fecharBugs {
+          margin-top: 20px;
+      }
+
+      .mensagensContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: baseline;
+      width: 100%;
+    }
+
+    .mensagem-item {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: justify;
+      position: relative;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: 100%;
+      max-height: 250px;
+      overflow-y: auto;
+}
+
+    .mensagem-titulo {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .mensagem-texto {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #333;
+      max-height: 150px; /* altura máxima */
+      overflow-y: auto;  /* adiciona barra de rolagem se ultrapassar */
+      word-break: break-word; /* quebra a palavra grande */
+    }
+
+    .mensagem-usuarios {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .btn-lixeira {
+      background: none;
+      border: none;
+      color: red;
+      font-size: 1.2rem;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+
+    .btn-loja{
+      background-color: #7bc41b;
+      color: #fff;
+    }
+
+    .btn-cor{
+      background-color: darksalmon;
+      color: #fff
+    }
+
+    .btn-comunicados{
+      background-color: rgb(216, 21, 21);
+      color: white;
+    }
+
+    /* Botão: Adicionar Fotos */
+    #botaoAdicionarFotos {
+      background-color: #22c55e;
+      border-color: #22c55e;
+      color: white;
+    }
+    #botaoAdicionarFotos:hover {
+      background-color: #16a34a;
+      border-color: #16a34a;
+    }
+
+    /* Botão: Correio Elegante */
+    #botaoCorreioElegante {
+      background-color: #9362e7;
+      border-color: #7c3aed;
+      color: white;
+    }
+    #botaoCorreioElegante:hover {
+      background-color: #6d28d9;
+      border-color: #6d28d9;
+    }
+
+    /* Botão: Ver Bugs */
+    #botaoVerBugs {
+      background-color: #4744eff8;
+      border-color: #4744eff8;
+      color: white;
+    }
+    #botaoVerBugs:hover {
+      transform: scale(1.1);
+              background-color: #7e57c2;
+              color: white;
+    }
+
+    .cor-navbar {
+      background-color: #E0F7FA   ;
+  }
+
+    .fonte{
+      font-family: 'Dancing script';
+      color: #5e35b1;
+  }
+  
+  .unstyled{
+      list-style: none;
+      border: none;
+      border-bottom: 2px solid #7e57c2;
+  }
+
+   .footer-custom {
+  width: 100%;
+  background-color: #E0F7FA;
+  padding: 20px 30px;
+  margin-top: 140px; /* Ajuste conforme necessário */
+  text-align: center;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0;
+  text-align: center;
+  color: #5e35b1;
+  font-weight: bold;
+}
+
+.navbar-nav .btn {
+  border: 2px solid #7e57c2; /* cor da borda roxa */
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: transparent; /* manter o fundo da navbar */
+  color: #7e57c2; /* cor do texto */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Efeito hover */
+.navbar-nav .btn:hover {
+  background-color: #7e57c2;
+  color: white;
+}
+
+/* Centralizar melhor os elementos */
+.navbar .container-fluid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  margin-right: 30px; /* dar um espacinho entre o logo e os botões */
+}
+
+.fonte{
+    font-family: 'Dancing script';
+    color: #5e35b1;
+}
+
+@media (max-width: 768px) {
+
+.navbar-collapse {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #E0F7FA;
+    border-radius: 10px;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    justify-content: end !important;
+}
+
+
+  .navbar-nav {
+    flex-direction: column;
+    align-items: flex-end !important;/* faz os botões se alinharem à direita */
+  }
+}
+  </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg  cor-navbar fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+           <img src="Logo.webp" alt="" width="40" height="40" class="d-inline-block align-text-top">
+            <span class="fonte">Beija Sapo</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav gap-2" style="margin-left: -270px;">
+           <li class="nav-item">
+            <a class="btn" href="index.html" style="color: #7e57c2;">
+              <i class="bi bi-house-door"></i> Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="loginAdm.html" style="color: #7e57c2;">
+              <i class="bi bi-shield-lock"></i> ADM
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="loginUser.html" style="color: #7e57c2;">
+              <i class="bi bi-person"></i> Usuário
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="cadastroUsuario.html" style="color: #7e57c2;">
+              <i class="bi bi-person-plus"></i> Cadastre-se
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="galeria.php" style="color: #7e57c2;">
+              <i class="bi bi-image"></i> Galeria
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="secrets.html" style="color: #7e57c2;">
+              <i class="bi bi-key"></i> Secrets
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card">
+          <h4 class="text-center mb-4">Painel administrativo</h4>
+  
+          <div id="painelBotoes" class="d-flex justify-content-around flex-wrap">            
+            <button class="btn btn-primary dynamic-btn" id="btnMarcarRole">
+              <i class="bi bi-calendar-plus me-1"></i> Marcar Rolê
+            </button>
+            <button class="btn btn-secondary dynamic-btn" id="botaoEditarRole">
+              <i class="bi bi-pencil-square me-1"></i> Editar Rolê
+            </button>
+            <button class="btn btn-danger dynamic-btn" id="botaoExcluirRole">
+              <i class="bi bi-trash me-1"></i> Excluir Rolê
+            </button>
+            <button class="btn btn-cor dynamic-btn" id="botaoCadastrarRole">
+              <i class="bi bi-card-list"></i> Cadastrar rolês do mês
+            </button>
+            <button class="btn btn-success dynamic-btn" id="botaoEnviarWhatsapp">
+              <i class="bi bi-whatsapp me-1"></i> Enviar por WhatsApp
+            </button>
+            <a href="upload.php" class="btn btn-warning dynamic-btn" id="botaoAdicionarFotos">
+              <i class="bi bi-image me-1"></i> Adicionar Fotos
+            </a>  
+            <button class="btn btn-primary dynamic-btn" id="botaoCorreioElegante">
+              <i class="bi bi-envelope me-1"></i> Mensagens do Correio Elegante
+              <span id="badgeCorreioElegante" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                
+              </span>
+            </button>
+            <button class="btn btn-info dynamic-btn" id="botaoSugestoesReclamacoes">
+              <i class="bi bi-chat-square-text me-1"></i> Sugestões/Reclamações
+              <span id="badgeSugestoesReclamacoes" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                0
+              </span>
+            </button>
+            <button class="btn btn-comunicados dynamic-btn" id="botaoComunicados">
+              <i class="bi bi-chat-square-text"></i> Divulgar empreendimento
+            </button>
+            <button class="btn btn-warning dynamic-btn" id="botaoVerBugs">
+              <i class="bi bi-bug me-1"></i> Ver Bugs
+              <span id="badgeVerBugs" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">
+                0
+              </span>
+            </button> 
+            <button class="btn dynamic-btn" id="botaoDarEmblemas" style="background-color: #10B981; color: #fff;">
+              <i class="bi bi-shield-shaded"></i> Dar emblemas
+            </button>   
+            <button class="btn btn-secondary dynamic-btn" id="botaoSecrets">
+              <i class="bi bi-eye"></i> Secrets
+              <span id="badgeSecrets" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
+            </button>
+            <button class="btn btn-loja dynamic-btn" id="botaoBrindes">
+              <i class="bi bi-shop"></i> Brindes
+              <span id="badgeSecrets" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display: none;">0</span>
+            </button>
+            <button id="btnAtualizarRanking" class="btn dynamic-btn">
+              <i class="bi bi-award"></i> Atualizar Ranking
+            </button>
+
+            <button class="btn btn-danger dynamic-btn" id="botaoVoltar">
+              <i class="bi bi-arrow-left-circle me-1"></i> Sair
+            </button>
+          </div>
+  
+          <!-- Formulário que será mostrado/ocultado -->
+          <div id="formContainer" style="display: none;">
+              <h4 class="text-center mb-4">Marque um novo rolê!</h4>
+            <form id="novoRoleForm">
+              <div class="mb-3">
+                <label for="nomeRole" class="form-label">Nome do Rolê</label>
+                <input type="text" class="form-control" id="nomeRole" required>
+              </div>
+  
+              <div class="row">
+                <div class="mb-3 col-md-6">
+                  <label for="dataRole" class="form-label">Data do Rolê</label>
+                  <input type="date" class="form-control" id="dataRole" required>
+                </div>
+                <div class="mb-3 col-md-6">
+                  <label for="horaRole" class="form-label">Horário do Rolê</label>
+                  <input type="time" class="form-control" id="horaRole" required>
+                </div>
+              </div>
+  
+              <div class="mb-3">
+                <label for="enderecoRole" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="enderecoRole" required>
+              </div>
+  
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-check-circle me-1"></i> Criar Rolê
+              </button>
+            </form>
+          </div>
+
+          <div id="cadastrarForm" style="display: none;">
+            <h4 class="text-center mb-4">Insira os dados de cada evento do mês</h4>
+            <form id="cadastrarRolesContainer">
+              <div class="mb-3">
+                <label for="descricaoEvento" class="form-label">Descrição do evento</label>
+                <textarea class="form-control" id="descricaoEvento" rows="3" placeholder="Ex: Parque Ibirapuera, dia 20 às 20h. Ponto de encontro: estação AACD."></textarea>
+              </div>
+              <button type="submit" class="btn btn-success">Cadastrar Evento</button>
+            </form>
+          
+            <!-- Agora essa div está FORA do formulário! -->
+            <div id="listaEventos" class="mt-4"></div>
+          </div>
+
+          <!-- Tela de visualização de bugs -->
+          <div id="bugsContainer" style="display: none;">
+            <h4 class="text-center mb-4">Bugs Relatados</h4>
+            <ul id="bugsList" class="list-group mb-3"></ul>
+            <button class="btn btn-secondary w-100" id="btnVoltarDosBugs">
+              <i class="bi bi-arrow-left"></i> Voltar ao Painel
+            </button>
+          </div>
+          
+          <div id="secretsContainer" style="display: none;">
+              <h4 class="text-center mb-4">Segredos Pendentes</h4>
+              <ul id="listaSegredos" class="list-group mb-3"></ul>
+              <button class="btn btn-secondary w-100" id="btnVoltarDosSegredos">
+                <i class="bi bi-arrow-left"></i> Voltar ao Painel
+              </button>
+            </div>
+
+          <div id="empreendimentoContainer" style="display: none;">
+            <h4 class="text-center mb-4">Divulgue um negócio aqui!</h4>
+            <form id="empreendimentoForm">
+              <div class="mb-3">
+                <label for="tituloEmpreendedor" class="form-label">Nome do negócio</label>
+                <input type="text" class="form-control" id="tituloEmpreendedor" placeholder="Ex: Delícias da Ju">
+            </div>
+
+            <div class="mb-3">
+                <label for="linkEmpreendedor" class="form-label">Link de contato (WhatsApp, Instagram etc.)</label>
+                <input type="text" class="form-control" id="linkEmpreendedor" placeholder="https://wa.me/551199999999">
+            </div>
+
+            <div class="mb-3">
+                <label for="imagemEmpreendedor" class="form-label">Imagem do negócio</label>
+                <input type="file" class="form-control" id="imagemEmpreendedor" accept="image/*" multiple required>
+            </div>
+
+            <div class="mb-3">
+              <label for="descricaoEmpreendimento" class="form-label">Descrição</label>
+              <textarea class="form-control" id="descricaoEmpreendimento" rows="3" ></textarea>
+            </div>
+            <button type="submit" class="btn btn-success w-100">
+                <i class="bi bi-megaphone"></i> Publicar Empreendimento
+            </button>            
+            </form>
+          </div>
+
+          <div id="sugestoesContainer"></div>
+          <div id="mensagensContainer" class="mt-4" style="display: none;"></div>
+          
+          <!-- Lista de Pendentes -->
+            <div id="listaPendentesContainer" style="display: none;" class="mt-3">
+              <div id="listaPendentes"></div>
+              <button class="btn btn-danger mt-3" onclick="excluirPendentes()">Excluir Lista</button>
+            </div>
+            
+        <div id="formContainerEmblemas" style="display: none;">
+            <h4 class="text-center mb-4">Atribuir Emblema Manual</h4>
+            <form id="atribuirEmblemaForm">
+                <div class="mb-3">
+                    <label for="descricaoEmblema" class="form-label">Descrição do Emblema</label>
+                    <textarea class="form-control" id="descricaoEmblema" rows="3" placeholder="Ex: Emblema de 'Veterano', para quem participou de mais de 50 eventos."></textarea>
+                </div>
+        
+                <div class="mb-3">
+                    <label for="imagemEmblema" class="form-label">Imagem do Emblema</label>
+                    <input type="file" class="form-control" id="imagemEmblema" accept="image/*" required>
+                </div>
+
+                <div class="mb-3">
+                  <label for="pontosEmblema" class="form-label">Pontos do Emblema</label>
+                  <input type="number" class="form-control" id="pontosEmblema" placeholder="Ex: 10" required>
+              </div>
+        
+                <!-- Campo de busca para filtrar os usuários -->
+                <div class="mb-3">
+                    <label for="buscaUsuarios" class="form-label">Buscar Usuários</label>
+                    <input type="text" class="form-control" id="buscaUsuarios" placeholder="Digite o nome ou username">
+                </div>
+        
+                <div class="mb-3">
+                    <label for="usuariosEmblema" class="form-label">Selecionar Usuários</label>
+                    <select class="form-control" id="usuariosEmblema" multiple required>
+                        <!-- Lista de usuários será populada via JavaScript -->
+                    </select>
+                </div>
+                
+        
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-check-circle me-1"></i> Atribuir Emblema
+                </button>
+            </form>
+        </div>
+
+        <div id="trocasContainer" style="display: none;">
+          <h4 class="text-center mb-4">Pedidos de Brindes</h4>
+          <ul id="listaTrocas" class="list-group mb-3"></ul>
+        </div>
+
+            <div id="formBrindesContainer" class="brindesContainer d-flex justify-content-center align-items-start" style="display: none; padding-top: 20px;">
+              <div style="width: 100%; max-width: 600px;">
+                <h4 class="text-center mb-4">Cadastre um novo brinde</h4>
+
+                <form id="formBrindes">
+                  <div class="mb-3">
+                    <label for="nomeBrinde" class="form-label">Nome do brinde:</label>
+                    <input type="text" class="form-control" id="nomeBrinde" placeholder="Digite o nome do brinde">
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="descricaoBrinde" class="form-label">Descrição:</label>
+                    <input type="text" id="descricaoBrinde" class="form-control" placeholder="Descreva o brinde">
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="valorBrinde" class="form-label">Valor:</label>
+                    <input type="number" id="valorBrinde" class="form-control" placeholder="Quantos pontos custa?">
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="imagemBrinde" class="form-label">Imagem do brinde:</label>
+                    <input type="file" class="form-control" id="imagemBrinde" accept="image/*" required>
+                  </div>
+
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="estoqueDisponivel">
+                    <label class="form-check-label" for="estoqueDisponivel">
+                      Estoque disponível
+                    </label>
+                  </div>
+
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-success rounded-pill px-4">
+                      <i class="bi bi-plus-circle"></i> Cadastrar Brinde
+                    </button>
+                  </div>
+
+                    <button class="btn btn-secondary w-100" id="btnVoltarDasTrocas" style="margin-top: 15px;">
+                      <i class="bi bi-arrow-left"></i> Voltar ao Painel
+                    </button>
+                </form>
+              </div>
+            </div>
+
+          <p class="text-center mt-3" id="roleTitulo">Carregando último rolê...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-custom">
+    <div class="footer-content">
+      <p>&copy; 2025 Beija Sapo - Todos os direitos reservados</p>
+      <p>Desenvolvido com 💜 para o grupo</p>
+    </div>
+    </footer>
+
+  
+
+
+    <script type= "module" src="js/painelAdm.js">
+    
+   
+
+
+
+
+
+      </script>
+      
+
+</body>
+</html>

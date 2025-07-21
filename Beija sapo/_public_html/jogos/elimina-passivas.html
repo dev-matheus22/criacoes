@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Elimine as Passivas 👗</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      text-align: center;
+    }
+
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #fff0f5, #ffe4e1);
+    }
+
+    .ball {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+
+    #score {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 8px 15px;
+      border-radius: 8px;
+      z-index: 1000;
+    }
+
+    #message {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      z-index: 1000;
+    }
+
+    #menuInicial {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #fff0f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #menuInicial button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menuInicial">
+  <h1>Elimine as Passivas 👗</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnRanking">🏆 Ver Ranking</button>
+  <button id="btnVoltar">🔙 Voltar ao Menu</button>
+</div>
+
+<!-- Modal de Ranking -->
+<div class="modal fade" id="modalRanking" tabindex="-1" aria-labelledby="modalRankingLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalRankingLabel">🏆 Top 5 - Elimine as Passivas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="rankingConteudo">Carregando ranking...</div>
+    </div>
+  </div>
+</div>
+
+<div id="score">Pontos: 0 | Nível: 1</div>
+<div id="message"></div>
+<div id="game"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkMTTM5yJbyIzjCl3vovJXx1dlNEX2IpU",
+    authDomain: "beija-sapo.firebaseapp.com",
+    projectId: "beija-sapo",
+    storageBucket: "beija-sapo.firebasestorage.app",
+    messagingSenderId: "429297677162",
+    appId: "1:429297677162:web:3792b9546b7b44a16e6b13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+  });
+
+  const game = document.getElementById("game");
+  const scoreEl = document.getElementById("score");
+  const message = document.getElementById("message");
+  const btnIniciar = document.getElementById("btnIniciar");
+  const btnRanking = document.getElementById("btnRanking");
+  const btnVoltar = document.getElementById("btnVoltar");
+  const menuInicial = document.getElementById("menuInicial");
+
+  let balls = [];
+  let score = 0;
+  let level = 1;
+  let maxLevel = 15;
+  let levelTime = 30000;
+  let moveInterval;
+  let gameRunning = false;
+
+  const EMOJIS = {
+    passiva: "💃🏼",
+    ativo: "🏋️",
+    versatil: "🙆🏻‍♂️"
+  };
+
+  const CONFIG = [
+    { tipo: "passiva", pontos: 1, quantidade: 10 },
+    { tipo: "ativo", pontos: -2, quantidade: 6 },
+    { tipo: "versatil", pontos: -1, quantidade: 8 }
+  ];
+
+  function criarBola(tipo, pontos) {
+    const bola = document.createElement("div");
+    bola.classList.add("ball");
+    bola.textContent = EMOJIS[tipo];
+    bola.dataset.tipo = tipo;
+    bola.dataset.pontos = pontos;
+    bola.style.fontSize = tipo === "ativo" ? "40px" : "35px";
+    bola.style.position = "absolute";
+    bola.style.left = Math.random() * (window.innerWidth - 60) + "px";
+    bola.style.top = Math.random() * (window.innerHeight - 60) + "px";
+
+    const velocidade = 2 + level * 0.5;
+    bola.velX = (Math.random() - 0.5) * velocidade;
+    bola.velY = (Math.random() - 0.5) * velocidade;
+
+    bola.posX = parseFloat(bola.style.left);
+    bola.posY = parseFloat(bola.style.top);
+
+    bola.addEventListener("click", () => {
+      if (!gameRunning) return;
+      score += pontos;
+      scoreEl.textContent = `Pontos: ${score} | Nível: ${level}`;
+      if (tipo === "passiva") {
+        bola.remove();
+        balls = balls.filter(b => b !== bola);
+      }
+    });
+
+    game.appendChild(bola);
+    balls.push(bola);
+  }
+
+  function criarBolasDoNivel() {
+    balls.forEach(b => b.remove());
+    balls = [];
+    CONFIG.forEach(cfg => {
+      for (let i = 0; i < cfg.quantidade; i++) {
+        criarBola(cfg.tipo, cfg.pontos);
+      }
+    });
+  }
+
+  function moverBolas() {
+    balls.forEach(bola => {
+      bola.posX += bola.velX;
+      bola.posY += bola.velY;
+      if (bola.posX < 0 || bola.posX > window.innerWidth - 60) bola.velX *= -1;
+      if (bola.posY < 0 || bola.posY > window.innerHeight - 60) bola.velY *= -1;
+      bola.style.left = bola.posX + "px";
+      bola.style.top = bola.posY + "px";
+    });
+  }
+
+  async function iniciarNivel() {
+    gameRunning = true;
+    criarBolasDoNivel();
+    scoreEl.textContent = `Pontos: ${score} | Nível: ${level}`;
+    message.textContent = "";
+    moveInterval = setInterval(moverBolas, 20);
+
+    setTimeout(async () => {
+      clearInterval(moveInterval);
+      if (level < maxLevel) {
+        level++;
+        iniciarNivel();
+      } else {
+        gameRunning = false;
+        message.textContent = `🏁 Fim de jogo! Pontuação: ${score}`;
+        if (currentUser) {
+          await addDoc(collection(db, "rank_elimine_passivas"), {
+            nome: currentUser.displayName || "Anônimo",
+            pontos: score,
+            data: Date.now(),
+            userId: currentUser.uid
+          });
+        }
+        menuInicial.style.display = "flex";
+      }
+    }, levelTime);
+  }
+
+  btnIniciar.addEventListener("click", () => {
+    menuInicial.style.display = "none";
+    score = 0;
+    level = 1;
+    iniciarNivel();
+  });
+
+  btnVoltar.addEventListener("click", () => {
+    window.location.href = "../jogos.html";
+  });
+btnRanking.addEventListener("click", async () => {
+  try {
+    const q = query(collection(db, "rank_elimine_passivas"), orderBy("pontos", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+    const rankingConteudo = document.getElementById("rankingConteudo");
+    rankingConteudo.innerHTML = "";
+
+    if (snapshot.empty) {
+      rankingConteudo.innerHTML = "<p class='text-center'>Ainda não há pontuações 😢</p>";
+    } else {
+      let pos = 1;
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const linha = document.createElement("p");
+        linha.innerHTML = `<strong>${pos}º</strong> ${d.nome || "Anônimo"} — <span class="text-success">${d.pontos} pontos</span>`;
+        rankingConteudo.appendChild(linha);
+        pos++;
+      });
+    }
+
+    const modalEl = document.getElementById("modalRanking");
+if (modalEl) {
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  modal.show();
+} else {
+  alert("Erro: Modal não encontrado no DOM");
+}
+
+
+  } catch (erro) {
+    alert("Erro ao carregar ranking: " + erro.message);
+  }
+});
+
+</script>
+</body>
+</html>

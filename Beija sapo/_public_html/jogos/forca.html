@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Jogo da Forca</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    text-align: center;
+    margin: 20px;
+  }
+  #wordDisplay {
+    font-size: 2rem;
+    letter-spacing: 10px;
+    margin-bottom: 20px;
+  }
+  #wrongLetters {
+    margin-top: 20px;
+    color: red;
+  }
+  #message {
+    font-size: 1.5rem;
+    margin-top: 20px;
+    color: green;
+  }
+  #inputArea {
+    margin-top: 20px;
+  }
+  #letterInput {
+    font-size: 1.5rem;
+    width: 50px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  #restartBtn {
+    margin-top: 30px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h1>Jogo da Forca</h1>
+<div id="wordDisplay"></div>
+<div>Erros: <span id="errors">0</span>/6</div>
+<div id="wrongLetters">Letras erradas: </div>
+
+<div id="inputArea">
+  <label for="letterInput">Digite uma letra:</label><br />
+  <input type="text" id="letterInput" maxlength="1" autofocus />
+</div>
+
+<div id="message"></div>
+<button id="restartBtn" style="display:none;">Jogar Novamente</button>
+
+<script>
+  const palavras = [
+    "BEIJA SAPO",
+    "AMIZADE",
+    "FELICIDADE",
+    "ALEGRIA",
+    "BRINCADEIRA",
+    "DIVERTIDO",
+    "JOGO",
+    "CHATGPT",
+    "COMPUTADOR",
+    "PROGRAMAÇÃO"
+  ];
+
+  let palavraSecreta = "";
+  let letrasCorretas = [];
+  let letrasErradas = [];
+  let maxErros = 6;
+
+  const wordDisplay = document.getElementById("wordDisplay");
+  const wrongLetters = document.getElementById("wrongLetters");
+  const errorsCount = document.getElementById("errors");
+  const letterInput = document.getElementById("letterInput");
+  const message = document.getElementById("message");
+  const restartBtn = document.getElementById("restartBtn");
+
+  function escolherPalavra() {
+    const index = Math.floor(Math.random() * palavras.length);
+    palavraSecreta = palavras[index];
+  }
+
+  function atualizarDisplay() {
+    let display = "";
+    for (let letra of palavraSecreta) {
+      if (letra === " ") {
+        display += "  ";
+      } else if (letrasCorretas.includes(letra.toUpperCase())) {
+        display += letra + " ";
+      } else {
+        display += "_ ";
+      }
+    }
+    wordDisplay.textContent = display.trim();
+  }
+
+  function atualizarErros() {
+    errorsCount.textContent = letrasErradas.length;
+    wrongLetters.textContent = "Letras erradas: " + letrasErradas.join(", ");
+  }
+
+  function checarFimDeJogo() {
+    if (!wordDisplay.textContent.includes("_")) {
+      message.style.color = "green";
+      message.textContent = "Parabéns! Você ganhou! 🎉";
+      terminarJogo();
+    } else if (letrasErradas.length >= maxErros) {
+      message.style.color = "red";
+      message.textContent = `Você perdeu! A palavra era: "${palavraSecreta}"`;
+      terminarJogo();
+    }
+  }
+
+  function terminarJogo() {
+    letterInput.disabled = true;
+    restartBtn.style.display = "inline-block";
+  }
+
+  function resetarJogo() {
+    letrasCorretas = [];
+    letrasErradas = [];
+    message.textContent = "";
+    errorsCount.textContent = "0";
+    wrongLetters.textContent = "Letras erradas: ";
+    letterInput.disabled = false;
+    restartBtn.style.display = "none";
+    escolherPalavra();
+    atualizarDisplay();
+    letterInput.value = "";
+    letterInput.focus();
+  }
+
+  letterInput.addEventListener("input", () => {
+    const letra = letterInput.value.toUpperCase();
+    letterInput.value = ""; // limpa o campo
+
+    if (!letra.match(/[A-ZÀ-Ú]/)) {
+      // aceitar letras, inclusive com acento
+      return;
+    }
+    if (letrasCorretas.includes(letra) || letrasErradas.includes(letra)) {
+      // letra já usada
+      return;
+    }
+
+    if (palavraSecreta.includes(letra)) {
+      letrasCorretas.push(letra);
+      atualizarDisplay();
+    } else {
+      letrasErradas.push(letra);
+      atualizarErros();
+    }
+
+    checarFimDeJogo();
+  });
+
+  restartBtn.addEventListener("click", resetarJogo);
+
+  // Inicia o jogo
+  escolherPalavra();
+  atualizarDisplay();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Caça ao Sapo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #c0f0c0;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+
+    #menuInicial {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #menuInicial button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    #gameContainer {
+      display: none;
+    }
+
+    #gameBoard {
+      display: grid;
+      grid-template-columns: repeat(10, 50px);
+      gap: 5px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      background: #7ed957;
+      cursor: pointer;
+      border: 1px solid #4a7d13;
+      font-size: 28px;
+      line-height: 50px;
+      user-select: none;
+    }
+
+    .clicked {
+      background: #a3d48f;
+      cursor: default;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      min-height: 30px;
+    }
+
+    #restartBtn {
+      padding: 10px 20px;
+      margin-top: 15px;
+      font-size: 16px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menuInicial">
+  <h1>🐸 Caça ao Sapo</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnVoltar">🔙 Voltar ao Painel</button>
+</div>
+
+<div id="gameContainer">
+  <h2 id="tituloNivel"></h2>
+  <div id="message"></div>
+  <div id="gameBoard"></div>
+  <button id="restartBtn">Jogar Novamente</button>
+</div>
+
+<script>
+  const board = document.getElementById('gameBoard');
+  const message = document.getElementById('message');
+  const restartBtn = document.getElementById('restartBtn');
+  const tituloNivel = document.getElementById('tituloNivel');
+
+  const menuInicial = document.getElementById('menuInicial');
+  const gameContainer = document.getElementById('gameContainer');
+  const btnIniciar = document.getElementById('btnIniciar');
+  const btnVoltar = document.getElementById('btnVoltar');
+
+  const size = 10;
+  const maxLevel = 20;
+
+  let level = 1;
+  let saposRestantes = 0;
+  let gameOver = false;
+  let mapa = [];
+
+  function criarMapa() {
+    mapa = new Array(size * size).fill('a');
+    const qtdSapos = level;
+    const qtdCrocodilos = Math.min(5, Math.floor(level / 2));
+
+    function posicionar(tipo, qtd) {
+      let colocados = 0;
+      while (colocados < qtd) {
+        let pos = Math.floor(Math.random() * mapa.length);
+        if (mapa[pos] === 'a') {
+          mapa[pos] = tipo;
+          colocados++;
+        }
+      }
+    }
+
+    posicionar('s', qtdSapos);
+    posicionar('c', qtdCrocodilos);
+
+    saposRestantes = qtdSapos;
+  }
+
+  function criarTabuleiro() {
+    board.innerHTML = '';
+    gameOver = false;
+    criarMapa();
+
+    for (let i = 0; i < mapa.length; i++) {
+      const cell = document.createElement('div');
+      cell.classList.add('cell');
+      cell.dataset.index = i;
+      board.appendChild(cell);
+    }
+
+    tituloNivel.textContent = `Nível ${level}`;
+    message.textContent = `Encontre os ${saposRestantes} sapos!`;
+    restartBtn.style.display = 'none';
+  }
+
+  board.addEventListener('click', (e) => {
+    if (gameOver) return;
+    if (!e.target.classList.contains('cell')) return;
+
+    const cell = e.target;
+    if (cell.classList.contains('clicked')) return;
+
+    const idx = parseInt(cell.dataset.index);
+    const tipo = mapa[idx];
+
+    cell.classList.add('clicked');
+
+    if (tipo === 's') {
+      cell.textContent = '🐸';
+      saposRestantes--;
+      if (saposRestantes > 0) {
+        message.textContent = `Você encontrou um sapo! Faltam ${saposRestantes}.`;
+      } else {
+        message.textContent = `🎉 Todos os sapos do nível ${level} encontrados!`;
+        gameOver = true;
+        restartBtn.style.display = 'inline-block';
+
+        if (level < maxLevel) {
+          restartBtn.textContent = 'Próximo Nível';
+          restartBtn.onclick = () => {
+            level++;
+            criarTabuleiro();
+          };
+        } else {
+          restartBtn.textContent = 'Jogar Novamente';
+          restartBtn.onclick = () => {
+            level = 1;
+            criarTabuleiro();
+          };
+        }
+      }
+    } else if (tipo === 'c') {
+      cell.textContent = '🐊';
+      message.textContent = '💥 Você caiu num crocodilo! Game Over!';
+      gameOver = true;
+      restartBtn.style.display = 'inline-block';
+      restartBtn.textContent = 'Jogar Novamente';
+      restartBtn.onclick = () => {
+        level = 1;
+        criarTabuleiro();
+      };
+    } else {
+      cell.textContent = '💧';
+      message.textContent = 'Água... continue procurando.';
+    }
+  });
+
+  btnIniciar.addEventListener('click', () => {
+    menuInicial.style.display = 'none';
+    gameContainer.style.display = 'block';
+    level = 1;
+    criarTabuleiro();
+  });
+
+  btnVoltar.addEventListener('click', () => {
+    window.location.href = "../painelUser.php"; // ou outro destino
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogos Beija Sapo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="shortcut icon" href="iconSapo.png" type="image/x-icon">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Montserrat Alternates', sans-serif;
+      background: linear-gradient(135deg, #A8E6CF, #DCEDC1);
+      margin: 0;
+      padding-top: 80px;
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      background-color: #E0F7FA;
+    }
+
+    .navbar-brand {
+      font-family: 'Dancing Script';
+      color: #5e35b1;
+    }
+
+    .nav-link, .btn {
+      color: #7e57c2;
+      font-weight: bold;
+    }
+
+    .painel-usuario {
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-jogo {
+      background-color: #E0F7FA;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      width: 200px;
+      transition: transform 0.2s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .card-jogo:hover {
+      transform: scale(1.05);
+      background-color: #d0f0ff;
+    }
+
+    .card-jogo img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 10px;
+    }
+
+    .footer-custom {
+      width: 100%;
+      background-color: #E0F7FA;
+      padding: 20px 30px;
+      margin-top: 30px;
+      text-align: center;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #5e35b1;
+    }
+
+    .grid-jogos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    h2 {
+      color: #5e35b1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">
+      <img src="Logo.webp" alt="Logo" width="40" height="40" class="d-inline-block align-text-top">
+      Beija Sapo
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav gap-2">
+        <li class="nav-item"><a class="btn" href="index.html"><i class="bi bi-house-door"></i> Home</a></li>
+        <li class="nav-item"><a class="btn" href="loginAdm.html"><i class="bi bi-shield-lock"></i> Adm</a></li>
+        <li class="nav-item"><a class="btn" href="loginUser.html"><i class="bi bi-person"></i> Usuário</a></li>
+        <li class="nav-item"><a class="btn" href="cadastroUsuario.html"><i class="bi bi-person-plus"></i> Cadastre-se</a></li>
+        <li class="nav-item"><a class="btn" href="galeria.php"><i class="bi bi-image"></i> Galeria</a></li>
+        <li class="nav-item"><a class="btn" href="secrets.html"><i class="bi bi-key"></i> Secrets</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Conteúdo -->
+<div class="painel-usuario">
+  <h2>🎮 Jogue e ganhe pontos!</h2>
+  <div class="grid-jogos">
+
+    <a href="jogos/click-frenetico.html" class="card-jogo text-decoration-none">
+      <img src="img/click.png" alt="Click Frenético">
+      <p>Click Frenético</p>
+    </a>
+
+    <a href="jogos/running-away.html" class="card-jogo text-decoration-none">
+      <img src="img/run.png" alt="Fuja do Ex">
+      <p>Run away</p>
+    </a>
+
+    <a href="jogos/elimina-passivas.html" class="card-jogo text-decoration-none">
+      <img src="img/passivas.png" alt="Elimine as Passivas">
+      <p>Elimine as Passivas</p>
+    </a>
+
+    <a href="jogos/memoria-visual.html" class="card-jogo text-decoration-none">
+      <img src="img/memoria.png" alt="Memória Visual">
+      <p>Memória Visual</p>
+    </a>
+
+    <a href="jogos/caca-ao-tesouro.html" class="card-jogo text-decoration-none">
+      <img src="img/tesouro.png" alt="Caça ao Tesouro">
+      <p>Caça ao sapo</p>
+    </a>
+
+    <a href="jogos/forca.html" class="card-jogo text-decoration-none">
+      <img src="img/forca.png" alt="Jogo da Forca">
+      <p>Jogo da Forca</p>
+    </a>
+
+    <a href="jogos/pula-plataforma.html" class="card-jogo text-decoration-none">
+      <img src="img/plataforma.png" alt="Jogo da Forca">
+      <p>Pula plataform</p>
+    </a>
+
+
+
+  </div>
+
+  <a href="painelUser.html" class="btn btn-outline-success rounded-pill mt-4">
+    <i class="bi bi-arrow-left"></i> Voltar para o Painel
+  </a>
+</div>
+
+<!-- Rodapé -->
+<footer class="footer-custom">
+  <div>
+    <p>© 2025 Beija Sapo - Todos os direitos reservados</p>
+    <p>Desenvolvido com 💜 para o grupo</p>
+  </div>
+</footer>
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

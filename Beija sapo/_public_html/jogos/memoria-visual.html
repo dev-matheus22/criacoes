@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<title>Memória Visual</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f0f8ff;
+    margin: 0;
+  }
+
+  #gameBoard {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 30px auto;
+    width: 90vw;
+    max-width: 700px;
+  }
+
+  .color-btn {
+    width: 100px;
+    height: 100px;
+    border-radius: 12px;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: transform 0.2s;
+  }
+
+  #message {
+    font-size: 1.4rem;
+    margin-top: 15px;
+  }
+
+  #menuInicial {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #f0f8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  #menuInicial button {
+    padding: 15px 30px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+  }
+</style>
+
+<div id="menuInicial">
+  <h1>🧠 Memória Visual</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnRanking">🏆 Ver Ranking</button>
+  <button id="btnVoltar">🔙 Voltar ao Menu</button>
+</div>
+
+<div id="message">Clique em "Iniciar Jogo"!</div>
+<div id="gameBoard"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkMTTM5yJbyIzjCl3vovJXx1dlNEX2IpU",
+    authDomain: "beija-sapo.firebaseapp.com",
+    projectId: "beija-sapo",
+    storageBucket: "beija-sapo.firebasestorage.app",
+    messagingSenderId: "429297677162",
+    appId: "1:429297677162:web:3792b9546b7b44a16e6b13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  onAuthStateChanged(auth, (user) => {
+    currentUser = user;
+  });
+
+  const btnIniciar = document.getElementById("btnIniciar");
+  const btnRanking = document.getElementById("btnRanking");
+  const btnVoltar = document.getElementById("btnVoltar");
+  const menu = document.getElementById("menuInicial");
+
+  const message = document.getElementById("message");
+  const board = document.getElementById("gameBoard");
+
+  let sequence = [];
+  let playerSequence = [];
+  let level = 0;
+  let acceptingInput = false;
+  const MAX_LEVEL = 30;
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  function getColorCountForLevel(level) {
+    return 4 + Math.floor((level - 1) / 5) * 2;
+  }
+
+  function generateRandomColor() {
+    const r = Math.floor(Math.random() * 200 + 30);
+    const g = Math.floor(Math.random() * 200 + 30);
+    const b = Math.floor(Math.random() * 200 + 30);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function createButtons(n) {
+    board.innerHTML = "";
+    const colors = [];
+
+    for (let i = 0; i < n; i++) {
+      const div = document.createElement("div");
+      div.classList.add("color-btn");
+      const color = generateRandomColor();
+      div.style.backgroundColor = color;
+      div.dataset.color = color;
+      colors.push(color);
+      board.appendChild(div);
+    }
+
+    document.querySelectorAll(".color-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        if (!acceptingInput) return;
+        const selectedColor = button.dataset.color;
+        playerSequence.push(selectedColor);
+
+        const index = playerSequence.length - 1;
+        if (playerSequence[index] !== sequence[index]) {
+          gameOver();
+          return;
+        }
+
+        if (playerSequence.length === sequence.length) {
+          if (level >= MAX_LEVEL) {
+            message.textContent = `🎉 Você completou todos os ${MAX_LEVEL} níveis!`;
+            acceptingInput = false;
+            return;
+          }
+          setTimeout(nextLevel, 1000);
+        }
+      });
+    });
+
+    return colors;
+  }
+
+  async function playSequence() {
+    acceptingInput = false;
+    message.textContent = `🔁 Memorize... Nível ${level}`;
+
+    const tempo = Math.max(600 - level * 10, 150);
+
+    for (let color of sequence) {
+      const btn = [...document.querySelectorAll(".color-btn")].find(b => b.dataset.color === color);
+      if (btn) {
+        btn.style.transform = 'scale(1.2)';
+        await sleep(tempo);
+        btn.style.transform = 'scale(1)';
+        await sleep(tempo / 2);
+      }
+    }
+
+    message.textContent = 'Sua vez!';
+    acceptingInput = true;
+  }
+
+  function nextLevel() {
+    level++;
+    playerSequence = [];
+
+    const totalColors = getColorCountForLevel(level);
+    const allColors = createButtons(totalColors);
+
+    const randomColor = allColors[Math.floor(Math.random() * totalColors)];
+    sequence.push(randomColor);
+    playSequence();
+  }
+
+  function resetGame() {
+    sequence = [];
+    playerSequence = [];
+    level = 0;
+    message.textContent = 'Clique em "Iniciar Jogo"!';
+    acceptingInput = false;
+  }
+
+  async function gameOver() {
+    message.textContent = `❌ Errou! Você chegou até o nível ${level}.`;
+    acceptingInput = false;
+
+    if (currentUser) {
+      await addDoc(collection(db, "rank_memoria_visual"), {
+        nome: currentUser.displayName || "Anônimo",
+        nivel: level,
+        data: Date.now(),
+        userId: currentUser.uid
+      });
+    }
+
+    setTimeout(() => {
+      window.scrollTo(0, 0); // volta ao topo
+      menu.style.display = "flex";
+      resetGame();
+    }, 2000);
+  }
+
+  btnIniciar.addEventListener('click', () => {
+    window.scrollTo(0, 0);
+    menu.style.display = "none";
+    resetGame();
+    nextLevel();
+  });
+
+  btnRanking.addEventListener('click', async () => {
+    if (!currentUser) {
+      alert("⚠️ Faça login para ver o ranking!");
+      return;
+    }
+
+    const q = query(collection(db, "rank_memoria_visual"), orderBy("nivel", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+
+    let texto = "🏆 Top 5 - Memória Visual\n\n";
+    snapshot.forEach((doc, i) => {
+      const d = doc.data();
+      texto += `${i + 1}. ${d.nome} - Nível ${d.nivel}\n`;
+    });
+
+    alert(texto);
+  });
+
+  btnVoltar.addEventListener("click", () => {
+    window.location.href = "../jogos.html";
+  });
+</script>
+</body>
+</html>
+

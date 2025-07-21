@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.12.1/font/bootstrap-icons.css">
+    <style>
+        body{
+            background-color: cadetblue;
+        }
+    </style>
+</head>
+<body>
+    <header class="text-center mt-4">
+        <h3>Cadastro de amigos</h3>
+    </header>
+    
+    <div id="form-container" class="d-flex align-items-center justify-content-center min-vh-100">
+        <form action="" class="text-center">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" id="nome" class="form-control w-70 mx-auto mb-3">
+    
+            <label for="idade" class="form-label">Idade</label>
+            <input type="text" id="idade" class="form-control w-70 mx-auto mb-3">
+    
+            <label for="cidade" class="form-label">Cidade</label>
+            <input type="text" id="cidade" class="form-control w-70 mx-auto mb-4">
+    
+            <button id="btnCadastrar" class="btn btn-primary">Cadastrar</button>
+            <button id="btnExibir" class="btn btn-primary">Exibir amigos</button>
+        </form>
+    </div>
+
+    <div id="lista">
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBVWnxIVFU4kMlUixgzkMxBuuD-6uypxKA",
+          authDomain: "crud-c895a.firebaseapp.com",
+          projectId: "crud-c895a",
+          storageBucket: "crud-c895a.firebasestorage.app",
+          messagingSenderId: "762290888625",
+          appId: "1:762290888625:web:ae605f6a35be9e44446790"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        
+        let btnCadastrar = document.getElementById("btnCadastrar");
+        let btnExibir = document.getElementById("btnExibir");
+        
+        btnCadastrar.addEventListener("click", async (e) => {
+        e.preventDefault();
+        
+        let nome = document.getElementById("nome").value
+        let idade = document.getElementById("idade").value;
+        let cidade = document.getElementById("cidade").value;
+
+            try {
+                const docRef = await addDoc(collection(db, "amigos"), {
+                    nome: nome,
+                    idade: idade,
+                    cidade: cidade
+                }); 
+                console.log("documento criado com ID: ", docRef)
+            } catch (erro){
+                console.error("Erro ao adicionar", erro)
+            }
+        });
+        
+        btnExibir.addEventListener("click", async (e) => {
+            e.preventDefault();
+
+            let lista = document.getElementById("lista");
+
+            const documento = await getDoc(doc(db, "amigos", docRef.id));
+
+            if (documento.exists()){
+                const dados = documento.data();
+                lista.innerHTML = `
+                <p><strong>Nome:</strong> ${dados.nome}</p>
+                <p><strong>Idade:</strong> ${dados.idade}</p>
+                `;
+            } else {
+                lista.textContent = "Dados não encontrados!"
+            }
+        })
+
+        
+
+        
+
+      </script>
+    
+
+
+
+
+
+    <script>
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beija sapo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="shortcut icon" href="iconSapo.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+     html {
+        min-height: 100%;
+    }
+     
+     
+     body {
+      min-height: 100%;
+      margin: 0;
+      padding: 90px 20px 20px 20px;
+      background: linear-gradient(135deg, #A8E6CF, #DCEDC1);
+      font-family: 'Montserrat Alternates', sans-serif;
+    }
+
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .container-custom,
+    .container-custom-eventos,
+    .container-custom-galeria {
+    background-color: #E0F7FA;
+    border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      opacity: 1;
+    }
+    
+    .container-custom {
+      flex: 1 1 400px;
+      max-width: 500px;
+    }
+    
+    .container-custom-eventos {
+      flex: 1 1 500px;
+      max-width: 700px;
+    }
+    
+    .container-custom-galeria {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .container-custom-empreendedores {
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      flex: 1 1 500px; /* Adicionado para que ocupe metade do espaço em telas grandes */
+      max-width: 500px; /* Adicionado para que ocupe metade do espaço em telas grandes */
+    }
+
+    .container-custom-qrcode {
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      flex: 1 1 400px; /* Ajustado para que ocupe metade do espaço em telas grandes, ou menos se houver outro item */
+      max-width: 700px;
+      text-align: center;
+    }
+
+    .img-fluid{
+      width: 400px;
+      height: 100px;
+    }
+
+    .container-custom-qrcode img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    
+    .container-custom-administradores{
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      margin: 20px auto;
+      max-width: 1220px;
+    }
+
+    .container-saude-prevencao{
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      margin: 20px auto;
+      max-width: 1220px;
+    }
+    
+    .container-custom-sugestoes{
+          flex: 1 1 400px; /* ocupa metade do espaço em telas grandes */
+      max-width: 500px;
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        
+    }
+    .container-custom-sobre {
+      flex: 2 1 500px; /* ocupa metade do espaço em telas grandes */
+      max-width: 700px;
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: auto;
+    }
+    
+    .container-custom-ranking {
+      flex: 1 1 500px; /* ocupa metade do espaço em telas grandes */
+      max-width: 700px;
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .container-custom-atualizacoes{
+      flex: 1 1 500px; /* ocupa metade do espaço em telas grandes */
+      max-width: 500px;
+      background-color: #E0F7FA;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+
+  .form-label {
+      color: #5e35b1;
+  }
+
+  .form-control {
+      border: 1px solid #d1c4e9;
+  }
+
+  .form-control:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 0.25rem rgba(167, 139, 250, 0.25);
+  }
+
+  .btn-primary {
+      background-color: #facc15;
+      border-color: #facc15;
+      color: #fff;
+  }
+
+  .btn-primary:hover {
+      background-color: #eab308;
+      border-color: #eab308;
+  }
+
+  .text-center {
+      color:  #7e57c2;
+  }
+
+  #listagem li {
+      color: #5e35b1;
+      margin-bottom: 0.5rem;
+  }
+  
+  .unstyled{
+      list-style: none;
+      border: none;
+      border-bottom: 2px solid #7e57c2;
+  }
+
+.cor-navbar {
+    background-color: #E0F7FA   ;
+}
+
+/* Estilizar os botões da navbar */
+.navbar-nav .btn {
+  border: 2px solid #7e57c2; /* cor da borda roxa */
+  border-radius: 8px;
+  padding: 8px 16px;
+  background-color: transparent; /* manter o fundo da navbar */
+  color: #7e57c2; /* cor do texto */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Efeito hover */
+.navbar-nav .btn:hover {
+  background-color: #7e57c2;
+  color: white;
+}
+
+/* Centralizar melhor os elementos */
+.navbar .container-fluid {
+  display: flex;
+  justify-content: center;
+    align-items: center;
+  }
+  
+  
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0;
+    text-align: center;
+    color: #5e35b1;
+    font-weight: bold;
+  }
+  
+  .footer-custom {
+
+    width: 100%;
+
+    background-color: #E0F7FA;
+
+    padding: 20px 30px;
+
+    margin-top: 30px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+  }
+  
+  .fonte{
+
+    font-family: 'Dancing script';
+
+    color: #5e35b1;
+
+}
+
+.ranking-estilo {
+  list-style: none;
+  padding: 0;
+  text-align: center;
+  color: #5e35b1;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.ranking-estilo li {
+  margin: 8px 0;
+}
+
+  .feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #fff;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background-color: #7e57c2;
+  color: white;
+  }
+
+  #introBeijaSapo {
+    background-color: #E0F7FA; 
+    border-radius: 20px; 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .card:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  color: black;
+  }
+
+  .card-body:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    background-color: #7e57c2;
+    color: white;
+  }
+
+@media (max-width: 768px) {
+  .container-custom,
+  .container-custom-eventos,
+  .container-custom-sugestoes,
+  .container-custom-sobre,
+  .container-custom-empreendedores, /* Adicionado para responsividade */
+  .container-custom-qrcode { /* Adicionado para responsividade */
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .flex-row {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.navbar-collapse {
+    position: end;
+    top: 60px;
+    right: 0;
+    background-color: #E0F7FA;
+    border-radius: 10px;
+    width: 1000px;
+    padding: 0px;
+    display: flex;
+    justify-content: flex-end !important;/* Isso aqui força os itens pra direita */
+  }
+
+  .navbar-nav {
+    flex-direction: column;
+    align-items: flex-end !important;/* faz os botões se alinharem à direita */
+  }
+
+
+
+
+
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg  cor-navbar fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+           <img src="Logo.webp" alt="" width="40" height="40" class="d-inline-block align-text-top">
+            <span class="fonte">Beija Sapo</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav gap-2" style="margin-left: -270px;">
+          <li class="nav-item">
+            <a class="btn" href="loginAdm.html">
+              <i class="bi bi-shield-lock"></i> ADM
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="loginUser.html">
+              <i class="bi bi-person"></i> Usuário
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="cadastroUsuario.html">
+              <i class="bi bi-person-plus"></i> Cadastre-se
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="galeria.php">
+              <i class="bi bi-image"></i> Galeria
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="btn" href="secrets.html" >
+              <i class="bi bi-key"></i> Secrets
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://www.instagram.com/spbeija_sapo/?igsh=b3ZreXIzZWl4MTF4#" class="btn" target="_blank">
+            <i class="bi bi-instagram"></i> Instagram
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section id="introBeijaSapo" class="py-5 text-center container-custom-administradores" style="margin-bottom: 20px;">
+  <div class="container">
+    <h2 class="mb-4">🌟 Conheça o Beija Sapo 🌟</h2>
+    <div class="row justify-content-center g-4">
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow rounded  h-100">
+          <i class="bi bi-stars fs-1 text-warning"></i>
+          <h5 class="mt-3">Ganhe Pontos</h5>
+          <p>Vá nos rolês oficiais e ganhe pontos!</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow rounded  h-100">
+          <i class="bi bi-award fs-1 text-primary"></i>
+          <h5 class="mt-3">Conquiste Emblemas</h5>
+          <p>Participe de eventos e ganhe emblemas únicos para o seu perfil.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow rounded h-100">
+          <i class="bi bi-shop fs-1 text-success"></i>
+          <h5 class="mt-3">Loja de Brindes</h5>
+          <p>Use seus pontos para trocar por labubus, copos, chaveiros e mais.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow rounded h-100">
+          <i class="bi bi-heart fs-1 text-danger"></i>
+          <h5 class="mt-3">Teste a química</h5>
+          <p>Envie hops e dê match com outros membros do grupo!</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow rounded  h-100">
+          <i class="bi bi-eye-slash fs-1 text-info"></i>
+          <h5 class="mt-3">Secrets</h5>
+          <p>Envie segredos de forma anônima e descubra os mistérios divertidos da galera.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+      <div class="flex-row">
+        <div id="cadastro" class="container-custom">
+          <h5 class="text-center mb-4" id="roleTitulo">Aguardando rolê...</h5>
+          </div>
+        
+      
+        <div class="container-custom-eventos">
+          <h3 class="text-center mb-4" id="roleTitulo">🐸 Eventos do mês 🐸</h3>
+          <ul id="listaEventos" class="list-group"></ul>
+        </div>
+        </div>
+
+
+          <div class="container-custom-administradores">
+            <h3 class="text-center mb-4">🐸💼 Sapinhos empreendedores 🐸💼</h3>
+            <h5 class="text-center mb-4">Caso queira divulgar seu negócio aqui, entre em contato com o Guynho ou o Diih pelo WhatsApp!</h5>
+            <div class="row" id="listaEmpreendedores"></div>
+          </div>
+
+      <div class="container-custom-administradores">
+        <h3 class="text-center mb-4">🐸👑 Os Adm do grupo e do site 🐸👑</h3>
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <img src="adms/GUI.jpg" class="rounded-circle mb-2" alt="Foto Admin 1" width="150" height="150">
+      <h5>Guilherme Dormano</h5>
+      <p><strong>Idade:</strong> 31</p>
+      <p><strong>Um fato sobre mim:</strong> Adoro filme de terror, um cafézin e o date perfeito é pizza com coca-cola!</p>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <img src="adms/diih.jpg" class="rounded-circle mb-2" alt="Foto Admin 2" width="150" height="150">
+      <h5>Diih Luna</h5>
+      <p><strong>Idade:</strong> 32 anos</p>
+      <p><strong>Um fato sobre mim:</strong> Adoro café com fofoca e bolo. Meu date perfeito é algo que não envolva pessoas e que não tenha que sair de casa.</p>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+      <img src="adms/matheus.jpg" class="rounded-circle mb-2" alt="Foto Admin do site" width="150" height="150">
+      <h5>Matheus</h5>
+      <p><strong>Idade:</strong> 25</p>
+      <p><strong>Um fato sobre mim: </strong>Adoro plantas 🌿, sou virgem e amo ler livros de teologia católica!</p>
+    </div>
+  </div>
+</div>
+
+      <div class="flex-row">
+        <div class="container-custom-atualizacoes">
+          <h3 class="text-center mb-4">🐸🛠 Mensagens do dev 🐸🛠️</h3>
+          <h5 class="text-center">1) Caso queiram usar a função de testar a química, definam um USERNAME antes.</h5>
+          <h5 class="text-center">2) Evitem colocar fotos +18 na foto de perfil</h5>
+          <h5 class="text-center">3) Caso notem algum bug no site, relatem no botão de relatar bugs.</h5>
+        </div>
+
+        <div class="container-custom-ranking">
+          <h2 class="text-center mb-4">🐸🥇 Ranking dos rolezeiros 🥇🐸</h2>
+          <ul id="rankingLista" class="ranking-lista ranking-estilo"></ul>
+        </div>
+      </div>
+
+      <!-- Seção: Saúde & Prevenção -->
+<!-- Seção: Saúde & Prevenção -->
+<!-- Seção: Saúde & Prevenção -->
+<div class="container-saude-prevencao" style="margin: 20px auto;">
+  <h3 class="text-center mb-4">🧬 Saúde & Prevenção</h3>
+  <div class="row g-4">
+
+    <!-- Card 1: PrEP -->
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-2">💊 O que é a PrEP?</h5>
+        <p>
+          A PrEP (Profilaxia Pré-Exposição) é um medicamento tomado diariamente para prevenir a infecção pelo HIV.
+          Está disponível gratuitamente pelo SUS.
+        </p>
+        <a href="https://www.gov.br/aids/pt-br/assuntos/prevencao-combinada/prep-profilaxia-pre-exposicao/prep-profilaxia-pre-exposicao" target="_blank" class="btn btn-outline-primary btn-sm">Saiba mais</a>
+      </div>
+    </div>
+
+    <!-- Card 2: Testes rápidos -->
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-2">🧪 Testes rápidos</h5>
+        <p>
+          Você pode fazer testes gratuitos para HIV, sífilis e outras ISTs em unidades de saúde e ONGs, com resultado rápido e sigiloso.
+        </p>
+        <a href="https://www.gov.br/pt-br/noticias/saude-e-vigilancia-sanitaria/2022/10/testes-rapidos-no-sus-permitem-diagnosticos-em-ate-30-minutos" target="_blank" class="btn btn-outline-primary btn-sm">Ver locais</a>
+      </div>
+    </div>
+
+    <!-- Card 3: PEP -->
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-2">⏱️ PEP: urgência pós-exposição</h5>
+        <p>
+          A PEP deve ser iniciada até 72h após uma situação de risco. É oferecida gratuitamente em unidades de emergência.
+        </p>
+        <a href="https://www.gov.br/aids/pt-br/assuntos/prevencao-combinada/pep-profilaxia-pos-exposicao-ao-hiv" target="_blank" class="btn btn-outline-primary btn-sm">Ver mais</a>
+      </div>
+    </div>
+
+    <!-- Card 4: Preservativos -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-2">🧤 Preservativos</h5>
+        <p>
+          Camisinhas externas e internas são métodos eficazes para evitar ISTs e gravidez. Você pode pegá-las de graça em unidades de saúde.
+        </p>
+        <a href="https://www.gov.br/aids/pt-br/assuntos/prevencao-combinada/usar-preservativos-externos-internos-e-gel-lubrificante" target="_blank" class="btn btn-outline-primary btn-sm">Saiba mais</a>
+      </div>
+    </div>
+
+    <!-- Card 5: Indetectável = Intransmissível -->
+    <div class="col-md-6 col-lg-4">
+      <div class="card shadow-sm p-3 h-100">
+        <h5 class="mb-2">🔒 Indetectável = Intransmissível</h5>
+        <p>
+          Pessoas vivendo com HIV em tratamento e carga viral indetectável não transmitem o vírus. Isso é ciência, não opinião.
+        </p>
+        <a href="https://www.gov.br/ebserh/pt-br/comunicacao/noticias/pessoas-com-carga-viral-indetectavel-nao-transmitem-o-hiv-em-relacoes-sexuais" target="_blank" class="btn btn-outline-primary btn-sm">Entenda o I=I</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+      <div class="flex-row">
+        <div class="container-custom-sugestoes">
+          <div id="formSugestoesReclamacoes">
+            <h4 class="text-center mb-2" id="roleTitulo">🐸💌 Sugestões/Reclamações 🐸😤 </h4>
+            <p class="text-center">É importante pra gente saber qualquer sugestão de melhoria ou reclamação de vocês sobre o grupo ou o site. Caso queira relatar um bug, dirija-se ao painel do usuário!</p>
+            <form id="sugestoesReclamacoesForm">
+              <div class="mb-3">
+                <label for="tipo" class="form-label">Tipo</label>
+                <select class="form-select" id="tipo" required>
+                  <option value="sugestao">Sugestão</option>
+                  <option value="reclamacao">Reclamação</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" required>
+              </div>
+              <div class="mb-3">
+                <label for="sobreAlguem" class="form-label">É sobre alguém?</label>
+                <select class="form-select" id="sobreAlguem" required>
+                  <option value="nao">Não</option>
+                  <option value="sim">Sim</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="mensagemSugestao" class="form-label">Mensagem</label>
+                <textarea class="form-control" id="mensagemSugestao" rows="4" required></textarea>
+              </div>
+              <button type="submit" class="btn btn-warning">Enviar</button>
+            </form>
+            <div id="sugestoesStatus" class="mt-2 text-success" style="display:none;">Sugestão/Reclamação enviada com sucesso!</div>
+          </div>
+        </div>
+      
+        <div class="container-custom-sobre">
+          <h2 class="text-center mb-4" id="roleTitulo">🐸❤️ Sobre o grupo 🐸❤️</h2>
+          <p class="text-center" style="color: #7e57c2;">
+          <strong class="text-dark">📢 Regras do grupo: 📢</strong><br><br>
+          Afim de manter um bom andamento no grupo, existem algumas regras que devem ser seguidas por todos <br>
+          Quem descumprir as regras estará sujeito a banimento do grupo do whatsapp <br>
+          <br>
+          <strong class="text-dark">📜✨ Regras gerais: 📜✨</strong><br>
+          <br>
+          ⛔ Muito tempo sem interação resultará em banimento<br>
+          📸 A foto de perfil deve ser liberada para os Adm<br>
+          ✅ Fotos e vídeos somente em visualização única<br>
+          💼 Para divulgação de produtos ou serviços, contate um ADM<br>
+          <br>
+          <strong class="text-danger">🚫 Proibições: 🚫</strong><br>
+          <br>
+          ❌ Estão proibidas as fotos que contenham nudez<br>
+          ❌ As figurinhas são permitidas com moderação<br>
+          ❌ Discriminação e preconceito<br>
+          ❌ Brigas<br>
+          ❌ Vendas de packs ou GP<br>
+          
+          </p>
+        </div>
+      </div>
+      
+        <footer class="footer-custom">
+          <div class="footer-content">
+            <p>© 2025 Beija Sapo - Todos os direitos reservados</p>
+            <p>Desenvolvido com 💜 para o grupo</p>
+            <a class="footer-content" href="assets/docs/politica_privacidade_beija_sapo.pdf" download>
+              Política de Privacidade
+            </a>
+          </div>
+        </footer>
+
+      
+
+    <script type="module" src="js/index.js">
+       
+
+
+
+
+
+
+    </script>
+</body>
+</html>

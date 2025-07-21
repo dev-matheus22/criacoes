@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clique no Sapo 🐸</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #e6ffe6;
+    }
+    h1 { margin-top: 20px; }
+    #info { font-size: 20px; margin: 10px; }
+    .sapo {
+      width: 60px;
+      height: 60px;
+      background-image: url("https://img.icons8.com/emoji/48/frog-emoji.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      position: absolute;
+      cursor: pointer;
+      display: none;
+    }
+    #menuInicial {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #e6ffe6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    #menuInicial button {
+      padding: 15px 30px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="menuInicial">
+  <h1>🐸 Clique no Sapo</h1>
+  <button id="btnIniciar">▶️ Iniciar Jogo</button>
+  <button id="btnRanking">🏆 Ver Ranking</button>
+  <button id="btnVoltar">🔙 Voltar ao Menu</button>
+</div>
+
+<div class="modal fade" id="modalRanking" tabindex="-1" aria-labelledby="modalRankingLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalRankingLabel">🏆 Top 5 - Clique no Sapo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="rankingConteudo">Carregando ranking...</div>
+    </div>
+  </div>
+</div>
+
+<div id="info">Pontuação: 0 | Nível: 1</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, doc, getDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDkMTTM5yJbyIzjCl3vovJXx1dlNEX2IpU",
+    authDomain: "beija-sapo.firebaseapp.com",
+    projectId: "beija-sapo",
+    storageBucket: "beija-sapo.firebasestorage.app",
+    messagingSenderId: "429297677162",
+    appId: "1:429297677162:web:3792b9546b7b44a16e6b13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let nomeUsuario = "Anônimo";
+  let authPronto = false;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      console.log("🔐 Usuário autenticado:", user.uid);
+      try {
+        const docRef = doc(db, "usuarios", user.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          nomeUsuario = docSnap.data().username || "Anônimo";
+        }
+        console.log("🧾 Nome recuperado:", nomeUsuario);
+      } catch (e) {
+        console.error("❌ Erro ao buscar nome do usuário:", e);
+      }
+    } else {
+      console.log("⚠️ Nenhum usuário autenticado");
+    }
+    authPronto = true;
+  });
+
+  const info = document.getElementById("info");
+  const btnIniciar = document.getElementById("btnIniciar");
+  const btnRanking = document.getElementById("btnRanking");
+  const btnVoltar = document.getElementById("btnVoltar");
+  const menu = document.getElementById("menuInicial");
+
+  let pontos = 0;
+  let level = 1;
+  let tempoLevel = 10000;
+  let sapos = [];
+  let sapoInterval = null;
+
+  function calcularSaposEVelocidade(nivel) {
+    if (nivel <= 5) return { qtd: 1, vel: 1000 - (nivel - 1) * 100 };
+    if (nivel <= 11) return { qtd: 2, vel: 1000 - (nivel - 6) * 100 };
+    if (nivel <= 16) return { qtd: 3, vel: 1000 - (nivel - 12) * 100 };
+    return { qtd: 4, vel: 1000 - (nivel - 17) * 100 };
+  }
+
+  function criarSapos(qtd) {
+    sapos.forEach(s => s.remove());
+    sapos = [];
+    for (let i = 0; i < qtd; i++) {
+      const sapo = document.createElement("div");
+      sapo.classList.add("sapo");
+      sapo.style.display = "block";
+      document.body.appendChild(sapo);
+
+      sapo.addEventListener("click", () => {
+        pontos++;
+        info.textContent = `Pontuação: ${pontos} | Nível: ${level}`;
+        moverSapo(sapo);
+      });
+
+      sapos.push(sapo);
+    }
+  }
+
+  function moverSapo(sapo) {
+    const maxX = window.innerWidth - 60;
+    const maxY = window.innerHeight - 60;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    sapo.style.left = x + "px";
+    sapo.style.top = y + "px";
+  }
+
+  function iniciarNivel() {
+    const { qtd, vel } = calcularSaposEVelocidade(level);
+    criarSapos(qtd);
+    info.textContent = `Pontuação: ${pontos} | Nível: ${level}`;
+    sapoInterval = setInterval(() => sapos.forEach(moverSapo), vel);
+    setTimeout(() => {
+      clearInterval(sapoInterval);
+      if (level < 21) {
+        level++;
+        iniciarNivel();
+      } else {
+        finalizarJogo();
+      }
+    }, tempoLevel);
+  }
+
+  async function finalizarJogo() {
+  sapos.forEach(s => s.remove());
+  alert("🎉 Fim do jogo! Sua pontuação: " + pontos);
+  
+  while (!authPronto) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  if (!currentUser) {
+    alert("⚠️ Usuário não autenticado, não é possível salvar ranking.");
+    return;
+  }
+
+  // Buscar nome atual do usuário no Firestore no momento do save
+  let nomeParaSalvar = "Anônimo";
+  try {
+    const docRef = doc(db, "usuarios", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      nomeParaSalvar = docSnap.data().username || "Anônimo";
+    }
+  } catch (e) {
+    console.error("Erro ao buscar nome para salvar:", e);
+  }
+
+  console.log("🔥 Salvando no ranking:", { nome: nomeParaSalvar, pontos });
+
+  await addDoc(collection(db, "rank_clique_alvo"), {
+    nome: nomeParaSalvar,
+    pontos: Number(pontos),
+    data: Date.now(),
+    userId: currentUser.uid
+  });
+
+  menu.style.display = "flex";
+  level = 1;
+  pontos = 0;
+}
+
+
+  btnIniciar.addEventListener("click", async () => {
+  if (!authPronto) {
+    alert("Carregando informações do usuário...");
+    return;
+  }
+
+  console.log("✅ Iniciando jogo com nome:", nomeUsuario);
+
+  menu.style.display = "none";
+  pontos = 0;
+  level = 1;
+  iniciarNivel();
+});
+
+  btnRanking.addEventListener("click", async () => {
+    if (!currentUser) {
+      alert("⚠️ Faça login para ver o ranking!");
+      return;
+    }
+
+    const q = query(collection(db, "rank_clique_alvo"), orderBy("pontos", "desc"), limit(5));
+    const snapshot = await getDocs(q);
+
+    const rankingConteudo = document.getElementById("rankingConteudo");
+    rankingConteudo.innerHTML = "";
+
+    if (snapshot.empty) {
+      rankingConteudo.innerHTML = "<p class='text-center'>Ainda não há pontuações 😢</p>";
+    } else {
+      let pos = 1; // contador manual
+
+snapshot.forEach((doc) => {
+  const d = doc.data();
+  console.log(`🏆 Entrada #${pos}:`, d); // Debug aqui
+
+  const linha = document.createElement("p");
+  linha.innerHTML = `<strong>${pos}º</strong> ${d.nome || "Anônimo"} — <span class="text-success">${d.pontos || 0} pontos</span>`;
+  rankingConteudo.appendChild(linha);
+
+  pos++;
+});
+
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById("modalRanking"));
+    modal.show();
+  });
+
+  btnVoltar.addEventListener("click", () => {
+    window.location.href = "../jogos.html";
+  });
+</script>
+</body>
+</html>
